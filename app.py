@@ -4,7 +4,7 @@ from queue import Queue
 import sqlite3
 import pypdf
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='Backend/templates')
 
 @app.route('/')
 def login():
