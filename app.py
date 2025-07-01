@@ -6,11 +6,11 @@ from queue import Queue
 import sqlite3
 
 
-app = Flask(__name__, template_folder='Backend/templates')
+app = Flask(__name__, template_folder='Backend/templates', static_folder='Backend/static')
 
 @app.route('/')
 def login():
-    return render_template('login.html')
+    return render_template('login_registro.html')
 
 @app.route('/registro')
 def registro():
