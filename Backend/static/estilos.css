@@ -579,6 +579,10 @@ a.btn-goback:hover {
   border-radius: 0 0 18px 18px;
 }
 
+.form-box form {
+  display: block;
+}
+
 .form-label {
   color: var(--guinda);
   font-weight: 700;
@@ -591,6 +595,14 @@ a.btn-goback:hover {
 }
 
 .form-control {
+    
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: 0;
+  margin-right: 0;
+
+
   border-radius: 20px;
   border: 1.5px solid #C8C8C8;
   background: var(--blanco);
@@ -611,6 +623,13 @@ a.btn-goback:hover {
 }
 
 .btn-primario {
+  display: block;
+  margin: 18px auto 0 auto;
+  width: 90%;
+  max-width: 320px;
+  height: 48px;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
   background: var(--guinda);
   color: var(--blanco);
   border: none;
