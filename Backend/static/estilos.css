@@ -1,12 +1,42 @@
 html, body * { box-sizing: border-box; font-family: 'Open Sans', sans-serif; }
 
+:root {
+  --guinda: #811B49;
+  --dorado: #DCCB88;
+  --blanco: #FFFFFF;
+  --gris-claro: #F2F2F2;
+  --marron: #A44B2E;
+  --verde: #76C043;
+  --negro: #1C1C1C;
+}
+
 body {
-  background:
-    linear-gradient(
-    rgba(246,247,249,0.8),
-    rgba(246,247,249,0.8)),
-    url(https://dl.dropboxusercontent.com/u/22006283/preview/codepen/sky-clouds-cloudy-mountain.jpg) no-repeat center center fixed;
-  background-size: cover;
+  background: var(--gris-claro);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.sigea-header {
+  width: 100%;
+  height: 120px;
+  background: var(--guinda);
+  color: var(--blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  letter-spacing: 0.14em;
+  margin-bottom: 0;
+  box-shadow: 0 2px 12px rgba(129,27,73,0.08);
+}
+
+.center-container {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
@@ -31,6 +61,16 @@ body {
   box-shadow: 0px 2px 7px rgba(0,0,0,0.2);
   overflow: hidden;
   transition: all .5s ease;
+  background: var(--blanco);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(129,27,73,0.10);
+  border: 1px solid #E5E5E5;
+  width: 400px;
+  margin: 40px auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .frame-long {
@@ -49,11 +89,19 @@ body {
   padding-top: 40px;
   opacity: 1;
   transition: all .5s ease;
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid var(--dorado);
+  background: var(--blanco);
+  border-radius: 18px 18px 0 0;
+  margin-bottom: 0;
 }
 
-.nav-up {
-  transform: translateY(-100px);
-  opacity: 0;
+.nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 li {
@@ -64,6 +112,22 @@ li {
   text-transform: uppercase;
   padding-right: 10px;
   color: #ffffff;
+  padding: 18px 32px 10px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--guinda);
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.nav .active {
+  border-bottom: 3px solid var(--guinda);
+  color: var(--guinda);
+}
+
+.nav .inactive {
+  color: #888;
 }
 
 .signin-active a {
@@ -507,4 +571,76 @@ a.btn-goback:hover {
   cursor: pointer;
   fill: #1059FF;
   transform: rotate(180deg);
+}
+
+.form-box {
+  padding: 36px 32px 28px 32px;
+  background: var(--gris-claro);
+  border-radius: 0 0 18px 18px;
+}
+
+.form-label {
+  color: var(--guinda);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  margin-left: 8px;
+  font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+}
+
+.form-control {
+  border-radius: 20px;
+  border: 1.5px solid #C8C8C8;
+  background: var(--blanco);
+  margin-bottom: 22px;
+  font-size: 1.08rem;
+  color: var(--negro);
+  padding: 12px 18px;
+  font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  height: 48px;
+  box-shadow: 0 1px 4px rgba(129,27,73,0.04);
+}
+
+.form-control:focus {
+  border-color: var(--guinda);
+  box-shadow: 0 0 0 2px #811B4922;
+  outline: none;
+}
+
+.btn-primario {
+  background: var(--guinda);
+  color: var(--blanco);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-primario:hover {
+  background: var(--marron);
+  color: var(--blanco);
+}
+
+.btn-secundario {
+  background: var(--dorado);
+  color: var(--negro);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-secundario:hover {
+  background: #B39B5C;
+  color: var(--blanco);
+}
+
+::placeholder {
+  color: #888888;
+  opacity: 1;
+  font-size: 1rem;
+  font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
 }
