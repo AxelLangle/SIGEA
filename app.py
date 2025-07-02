@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -66,6 +66,11 @@ def registro():
         conn.close()
     return redirect(url_for('index'))
 
+@app.route('/dashboard')
+def dashboard():
+    nombre = session.get('nombre', 'Usuario')
+    return render_template('dashboard.html', nombre=nombre)
+
 @app.route('/login', methods=['POST'])
 def login():
     correo = request.form['correo']
@@ -79,9 +84,9 @@ def login():
     conn.close()
 
     if user and check_password_hash(user['contrasena'], contrasena):
+        session['nombre'] = user['nombre']
         flash('Inicio de sesión exitoso')
-        # Aquí puedes redirigir a la página principal del sistema
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
     else:
         flash('Correo o contraseña incorrectos')
         return redirect(url_for('index'))

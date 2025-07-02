@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    h1 {
+      color: #811B49;
+    }
+    .botones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .botones button, .botones label {
+      padding: 10px 20px;
+      border: none;
+      background-color: #76C043;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .botones label {
+      background-color: #76C043;
+    }
+    .botones input[type="file"] {
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #811B49;
+      color: white;
+    }
+    .formulario input {
+      width: 200px;
+      padding: 5px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    #archivo-nombre {
+      font-style: italic;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>REGISTRO DE EVENTO</h1>
+
+  <div class="botones">
+    <button onclick="registrarEvento()">Registrar nuevo evento</button>
+    <button>Ver eventos por estado</button>
+    <button>Ver notificaciones</button>
+    <button>Generar reportes</button>
+
+    <!-- Botón para subir borrador -->
+    <label for="borrador">Subir borrador de reporte</label>
+    <input type="file" id="borrador" accept=".pdf,.doc,.docx,.txt" onchange="mostrarNombreArchivo()">
+
+    <!-- NUEVO BOTÓN -->
+    <button onclick="enviarReporte()">Enviar reporte</button>
+  </div>
+
+  <div id="archivo-nombre"></div>
+
+  <!-- TABLA DE RESUMEN -->
+  <h3>Resumen de Eventos</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Borrador</th>
+        <th>Pendiente</th>
+        <th>Terminado</th>
+        <th>Reporte enviado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="borrador-celda">0</td>
+        <td id="pendiente-celda">0</td>
+        <td id="terminado-celda">0</td>
+        <td id="reporte-celda">0</td>
+      </tr>
+    </tbody>
+  </table>
+
+ 
+
+  <script>
+    let borrador = 0;
+    let pendiente = 0;
+    let terminado = 0;
+    let reporteEnviado = 0;
+
+    function actualizarResumen() {
+      document.getElementById('borrador-celda').textContent = borrador;
+      document.getElementById('pendiente-celda').textContent = pendiente;
+      document.getElementById('terminado-celda').textContent = terminado;
+      document.getElementById('reporte-celda').textContent = reporteEnviado;
+    }
+
+    function registrarEvento() {
+      borrador++;
+      pendiente++;
+      actualizarResumen();
+    }
+
+    function mostrarNombreArchivo() {
+      const input = document.getElementById('borrador');
+      if (input.files.length > 0) {
+        const nombre = input.files[0].name;
+        document.getElementById('archivo-nombre').textContent = `Archivo cargado: ${nombre}`;
+        // Solo suma en reporte enviado si aún no se ha contado
+        reporteEnviado++;
+        actualizarResumen();
+      }
+    }
+
+    function enviarReporte() {
+      terminado++;
+      reporteEnviado++;
+      actualizarResumen();
+    }
+
+    actualizarResumen();
+  </script>
+
+</body>
+</html>
+
+
+
+

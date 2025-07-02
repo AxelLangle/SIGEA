@@ -25,11 +25,11 @@
                 <form method="POST" action="{{ url_for('login') }}">
                     <div class="mb-3">
                         <label for="correo" class="form-label">Correo Institucional</label>
-                        <input type="email" class="form-control" id="correo" placeholder="Correo Electrónico Institucional" required>
+                        <input type="email" class="form-control" id="correo" name="correo" placeholder="Correo Electrónico Institucional" required>
                     </div>
                     <div class="mb-3">
                         <label for="contrasena" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="contrasena" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Contraseña" required>
                     </div>
                     <button type="submit" class="btn btn-primario w-100 mb-2">Iniciar Sesión</button>
                 </form>
