@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='Backend/templates', static_folder='Backend/static')
 app.secret_key = 'tu_clave_secreta'
@@ -49,11 +50,13 @@ def registro():
         flash('Las contraseñas no coinciden')
         return redirect(url_for('index'))
 
+    hashed_password = generate_password_hash(contrasena)
+
     conn = get_db_connection()
     try:
         conn.execute(
             'INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, correo, contrasena) VALUES (?, ?, ?, ?, ?)',
-            (nombre, apellido_paterno, apellido_materno, correo, contrasena)
+            (nombre, apellido_paterno, apellido_materno, correo, hashed_password)
         )
         conn.commit()
         flash('Usuario registrado exitosamente')
@@ -70,12 +73,12 @@ def login():
 
     conn = get_db_connection()
     user = conn.execute(
-        'SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?',
-        (correo, contrasena)
+        'SELECT * FROM usuarios WHERE correo = ?',
+        (correo,)
     ).fetchone()
     conn.close()
 
-    if user:
+    if user and check_password_hash(user['contrasena'], contrasena):
         flash('Inicio de sesión exitoso')
         # Aquí puedes redirigir a la página principal del sistema
         return redirect(url_for('index'))
