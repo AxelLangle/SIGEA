@@ -644,6 +644,13 @@ a.btn-goback:hover {
 }
 
 .btn-secundario {
+  display: block;
+  margin: 18px auto 0 auto;
+  width: 90%;
+  max-width: 320px;
+  height: 48px;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
   background: var(--dorado);
   color: var(--negro);
   border: none;
