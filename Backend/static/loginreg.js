@@ -25,4 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
         loginForm.style.display = 'none';
         registerForm.style.display = 'block';
     });
+    // Validación personalizada para el correo institucional
+    const correoReg = document.getElementById('correo_reg');
+    if (correoReg) {
+        correoReg.addEventListener('input', function() {
+            const regex = /^[a-zA-Z0-9._%+-]+@uptecamac\.edu\.mx$/;
+            if (!regex.test(correoReg.value)) {
+                correoReg.setCustomValidity('Solo se permiten correos institucionales @uptecamac.edu.mx');
+            } else {
+                correoReg.setCustomValidity('');
+            }
+        });
+    }
 });

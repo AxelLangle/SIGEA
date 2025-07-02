@@ -41,12 +41,18 @@
                         <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
                     </div>
                     <div class="mb-3">
-                        <label for="apellidos" class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" id="apellidos" placeholder="Apellidos" required>
+                        <label for="apellido_pat" class="form-label">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="apellido_pat" placeholder="Apellido Paterno" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellido_mat" class="form-label">Apellido Materno</label>
+                        <input type="text" class="form-control" id="apellido_mat" placeholder="Apellido Materno" required>
                     </div>
                     <div class="mb-3">
                         <label for="correo_reg" class="form-label">Correo institucional</label>
-                        <input type="email" class="form-control" id="correo_reg" placeholder="Correo institucional" required>
+                        <input type="email" class="form-control" id="correo_reg" placeholder="Correo institucional" required 
+                                pattern="^[a-zA-Z0-9._%+-]+@uptecamac\.edu\.mx$"
+                                title="Solo se permiten correos institucionales @uptecamac.edu.mx">    
                     </div>
                     <div class="mb-3">
                         <label for="contrasena_reg" class="form-label">Contraseña</label>

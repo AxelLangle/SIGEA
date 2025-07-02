@@ -1,6 +1,5 @@
 import sqlite3
 
-
 conn = sqlite3.connect('usuarios.db')
 c = conn.cursor()
 c.execute('''
@@ -17,4 +16,4 @@ conn.commit()
 conn.close()
 
 if __name__ == '__main__':
-    sqlite3.run(debug=True)
+    print("Base de datos y tabla 'usuarios' creadas correctamente.")
