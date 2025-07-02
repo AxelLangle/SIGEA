@@ -22,7 +22,7 @@
                 </ul>
             </div>
             <div class="form-box" id="login-form">
-                <form>
+                <form method="POST" action="{{ url_for('login') }}">
                     <div class="mb-3">
                         <label for="correo" class="form-label">Correo Institucional</label>
                         <input type="email" class="form-control" id="correo" placeholder="Correo Electrónico Institucional" required>
@@ -35,7 +35,7 @@
                 </form>
             </div>
             <div class="form-box" id="register-form" style="display:none;">
-                <form>
+                <form method="POST" action="{{ url_for('registro') }}">
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
