@@ -577,6 +577,21 @@ a.btn-goback:hover {
   padding: 36px 32px 28px 32px;
   background: var(--gris-claro);
   border-radius: 0 0 18px 18px;
+
+    /* Nuevo: alto máximo y scroll interno */
+  max-height: 420px;   /* Ajusta este valor según tu diseño */
+  overflow-y: auto;
+}
+
+/* Opcional: para que el scroll sea más suave y bonito */
+.form-box::-webkit-scrollbar {
+  width: 8px;
+  background: #eee;
+  border-radius: 8px;
+}
+.form-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 8px;
 }
 
 .form-box form {
