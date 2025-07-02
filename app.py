@@ -1,11 +1,28 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
+import os
 
 app = Flask(__name__, template_folder='Backend/templates', static_folder='Backend/static')
 app.secret_key = 'tu_clave_secreta'
 
 def get_db_connection():
-    conn = sqlite3.connect('usuarios.db')
+    db_dir = os.path.join(os.path.dirname(__file__), 'Database')
+    db_path = os.path.join(db_dir, 'usuarios.db')
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir)
+    if not os.path.exists(db_path):
+        # Create the database and table if they don't exist
+        conn = sqlite3.connect(db_path)
+        conn.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT NOT NULL,
+            apellido_paterno TEXT NOT NULL,
+            apellido_materno TEXT NOT NULL,
+            correo TEXT NOT NULL UNIQUE,
+            contrasena TEXT NOT NULL
+        )''')
+        conn.commit()
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 

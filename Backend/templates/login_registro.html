@@ -38,29 +38,29 @@
                 <form method="POST" action="{{ url_for('registro') }}">
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
                     </div>
                     <div class="mb-3">
                         <label for="apellido_pat" class="form-label">Apellido Paterno</label>
-                        <input type="text" class="form-control" id="apellido_pat" placeholder="Apellido Paterno" required>
+                        <input type="text" class="form-control" id="apellido_pat" name="apellido_pat" placeholder="Apellido Paterno" required>
                     </div>
                     <div class="mb-3">
                         <label for="apellido_mat" class="form-label">Apellido Materno</label>
-                        <input type="text" class="form-control" id="apellido_mat" placeholder="Apellido Materno" required>
+                        <input type="text" class="form-control" id="apellido_mat" name="apellido_mat" placeholder="Apellido Materno" required>
                     </div>
                     <div class="mb-3">
                         <label for="correo_reg" class="form-label">Correo institucional</label>
-                        <input type="email" class="form-control" id="correo_reg" placeholder="Correo institucional" required 
+                        <input type="email" class="form-control" id="correo_reg" name="correo_reg" placeholder="Correo institucional" required 
                                 pattern="^[a-zA-Z0-9._%+-]+@uptecamac\.edu\.mx$"
                                 title="Solo se permiten correos institucionales @uptecamac.edu.mx">    
                     </div>
                     <div class="mb-3">
                         <label for="contrasena_reg" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="contrasena_reg" placeholder="Contraseña" required>
+                        <input type="password" class="form-control" id="contrasena_reg" name="contrasena_reg" placeholder="Contraseña" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmar_contrasena" class="form-label">Confirmar contraseña</label>
-                        <input type="password" class="form-control" id="confirmar_contrasena" placeholder="Confirmar contraseña" required>
+                        <input type="password" class="form-control" id="confirmar_contrasena" name="confirmar_contrasena" placeholder="Confirmar contraseña" required>
                     </div>
                     <button type="submit" class="btn btn-primario w-100 mb-2">Registrar</button>
                 </form>
