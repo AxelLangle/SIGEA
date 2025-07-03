@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Editable</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+
+<style>
+:root {
+  --guinda: #811B49;
+  --dorado: #DCCB88;
+  --verde: #76C043;
+  --blanco: #fff;
+  --gris-claro: #F2F2F2;
+  --negro: #1C1C1C;
+}
+body {
+  font-family: 'Open Sans', Arial, sans-serif;
+  background: var(--gris-claro);
+  margin: 0;
+  padding: 0;
+}
+.sigea-header {
+  width: 100%;
+  height: 90px;
+  background: var(--guinda);
+  color: var(--blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.3rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 12px rgba(129,27,73,0.08);
+}
+.main-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: var(--blanco);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(129,27,73,0.10);
+  padding: 32px 28px;
+}
+h2 {
+  color: var(--guinda);
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  letter-spacing: 0.04em;
+}
+input[type="text"], input.edicion {
+  width: 70%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #C8C8C8;
+  font-size: 1rem;
+  background: var(--gris-claro);
+  font-family: 'Open Sans', Arial, sans-serif;
+  margin-bottom: 8px;
+}
+input[type="text"]:focus, input.edicion:focus {
+  border-color: var(--guinda);
+  outline: none;
+  background: #fff;
+}
+button {
+  padding: 8px 18px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  margin-left: 10px;
+  background-color: var(--guinda);
+  color: var(--blanco);
+  transition: background 0.2s, color 0.2s;
+}
+button:hover {
+  background-color: var(--dorado);
+  color: var(--negro);
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  margin-bottom: 10px;
+  background: var(--gris-claro);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+span {
+  flex: 1;
+}
+</style>
+</head>
+<body>
+  <div class="sigea-header">
+    SIGEA
+  </div>
+  <div class="main-container">
+    <h2>Lista editable</h2>
+    <input type="text" id="entrada" placeholder="Escribe algo...">
+    <button onclick="agregarElemento()">Agregar</button>
+    <ul id="lista"></ul>
+  </div>
+  <script>
+  function agregarElemento() {
+    const entrada = document.getElementById("entrada");
+    const valor = entrada.value.trim();
+    if (valor !== "") {
+      const lista = document.getElementById("lista");
+      const li = document.createElement("li");
+
+      // Crear span para mostrar el texto
+      const span = document.createElement("span");
+      span.textContent = valor;
+      span.ondblclick = function() {
+        editarElemento(span);
+      };
+
+      // Crear botón de eliminar con ícono
+      const btnEliminar = document.createElement("button");
+      btnEliminar.innerHTML = "🗑";
+      btnEliminar.title = "Eliminar";
+      btnEliminar.onclick = function() {
+        lista.removeChild(li);
+      };
+
+      li.appendChild(span);
+      li.appendChild(btnEliminar);
+      lista.appendChild(li);
+      entrada.value = "";
+    }
+  }
+
+  function editarElemento(span) {
+    const textoOriginal = span.textContent;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = textoOriginal;
+    input.className = "edicion";
+
+    input.onblur = function() {
+      span.textContent = input.value.trim() || textoOriginal;
+      span.ondblclick = function() {
+        editarElemento(span);
+      };
+      span.style.display = "inline";
+      input.remove();
+    };
+
+    span.parentNode.insertBefore(input, span);
+    span.style.display = "none";
+    input.focus();
+  }
+
+  // Permitir agregar con Enter
+  document.getElementById("entrada").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      agregarElemento();
+    }
+  });
+</script>
+</body>
+</html>
+  
