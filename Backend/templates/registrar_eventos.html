@@ -115,6 +115,55 @@
     .aprobar:hover {
       background-color: #a02a5d;
     }
+
+    li button.desplegar {
+  background: transparent;
+  color: var(--guinda);
+  margin-left: 0;
+  margin-right: 10px;
+  font-size: 1.1em;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0 6px;
+  }
+  ul {
+  list-style: none;
+  padding: 0;
+  }
+  li {
+  margin-bottom: 10px;
+  background: var(--gris-claro);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  overflow: hidden;
+  flex-wrap: wrap;
+  position: relative;
+    }
+  span {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    cursor: pointer;
+      }
+.detalle-div {
+  width: 100%;
+  background: #f5e9f0;
+  color: var(--guinda);
+  padding: 8px 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  font-size: 0.98em;
+  word-break: break-word;
+  display: none;
+}
   </style>
 </head>
 <body>
@@ -157,6 +206,15 @@
     <label for="lugar">Lugar del evento</label>
     <input type="text" id="lugar" name="lugar">
 
+    <!--Inicio lista editable-->
+    <div class="main-container" style="box-shadow:none; padding:0; margin:0;">
+      <h3 style="color:var(--guinda); font-size:1.1rem; margin-bottom:10px;">Lista editable de actividades</h3>
+      <input type="text" id="entrada" placeholder="Escribe una actividad...">
+      <button type="button" onclick="agregarElemento()">Agregar</button>
+      <ul id="lista"></ul>
+    </div>
+    <!--Fin lista editable-->
+
     <div class="row">
       <div>
         <label for="docente">Docente</label>
@@ -190,5 +248,98 @@
       <button type="submit" class="aprobar">Enviar para aprobación</button>
     </div>
   </form>
+
+  <!--Script lista editable-->
+<script>
+  function agregarElemento() {
+    const entrada = document.getElementById("entrada");
+    const valor = entrada.value.trim();
+    if (valor !== "") {
+      const lista = document.getElementById("lista");
+      const li = document.createElement("li");
+
+      // Botón desplegable ">"
+      const btnDesplegar = document.createElement("button");
+      btnDesplegar.type = "button"; // ¡Evita recarga de página!
+      btnDesplegar.innerHTML = "&#x25B6;";
+      btnDesplegar.title = "Mostrar/Ocultar";
+      btnDesplegar.className = "desplegar";
+      btnDesplegar.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (detalleDiv.style.display === "none") {
+          detalleDiv.style.display = "block";
+          btnDesplegar.innerHTML = "&#9662;";
+        } else {
+          detalleDiv.style.display = "none";
+          btnDesplegar.innerHTML = "&#x25B6;";
+        }
+      };
+
+      // Crear span para mostrar el texto (resumido)
+      const span = document.createElement("span");
+      span.title = valor;
+      span.textContent = valor;
+      span.ondblclick = function() {
+        editarElemento(span, detalleDiv);
+      };
+
+      // Crear botón de eliminar con ícono
+      const btnEliminar = document.createElement("button");
+      btnEliminar.type = "button"; // ¡Evita recarga de página!
+      btnEliminar.innerHTML = "🗑";
+      btnEliminar.title = "Eliminar";
+      btnEliminar.onclick = function(e) {
+        e.preventDefault();
+        lista.removeChild(li);
+      };
+
+      // Área de detalle (desplegable)
+      const detalleDiv = document.createElement("div");
+      detalleDiv.className = "detalle-div";
+      detalleDiv.textContent = valor;
+      detalleDiv.style.display = "none"; // ¡Siempre oculto al inicio!
+
+      li.appendChild(btnDesplegar);
+      li.appendChild(span);
+      li.appendChild(btnEliminar);
+      li.appendChild(detalleDiv);
+      lista.appendChild(li);
+      entrada.value = "";
+    }
+  }
+
+  function editarElemento(span, detalleDiv) {
+    const textoOriginal = span.textContent;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = textoOriginal;
+    input.className = "edicion";
+
+    input.onblur = function() {
+      const nuevoValor = input.value.trim() || textoOriginal;
+      span.textContent = nuevoValor;
+      span.title = nuevoValor;
+      if (detalleDiv) detalleDiv.textContent = nuevoValor;
+      span.ondblclick = function() {
+        editarElemento(span, detalleDiv);
+      };
+      span.style.display = "inline";
+      input.remove();
+    };
+
+    span.parentNode.insertBefore(input, span);
+    span.style.display = "none";
+    input.focus();
+  }
+
+  // Permitir agregar con Enter
+  document.getElementById("entrada").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      agregarElemento();
+    }
+  });
+</script>
 </body>
 </html>
