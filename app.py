@@ -91,5 +91,9 @@ def login():
         flash('Correo o contraseña incorrectos')
         return redirect(url_for('index'))
 
+@app.route('/registrar_evento')
+def registrar_evento():
+    return render_template('registrar_eventos.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

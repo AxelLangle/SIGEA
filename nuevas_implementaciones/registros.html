@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Evento</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #002060;
+      text-align: center;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .borrador {
+      background-color: #e0e0e0;
+    }
+    .borrador:hover {
+      background-color: #d0d0d0;
+    }
+    .aprobar {
+      background-color: #4285f4;
+      color: white;
+    }
+    .aprobar:hover {
+      background-color: #3367d6;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>REGISTRO DE EVENTO</h2>
+
+  <form>
+    <label for="titulo">Título del evento</label>
+    <input type="text" id="titulo" name="titulo">
+
+    <div class="row">
+      <div>
+        <label for="categoria">Categoría</label>
+        <select id="categoria" name="categoria">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="impacto">Impacto</label>
+        <select id="impacto" name="impacto">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="tematica">Temática</label>
+    <textarea id="tematica" name="tematica" rows="2"></textarea>
+
+    <label for="justificacion">Justificación</label>
+    <textarea id="justificacion" name="justificacion" rows="2"></textarea>
+
+    <label for="objetivo">Objetivo</label>
+    <textarea id="objetivo" name="objetivo" rows="2"></textarea>
+
+    <div class="row">
+      <div>
+        <label for="docente">Docente</label>
+        <select id="docente" name="docente">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="grupos">Grupos asignados</label>
+        <input type="text" id="grupos" name="grupos">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="docente2">Docente</label>
+        <select id="docente2" name="docente2">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="coordinador">Coordinador (opcional)</label>
+        <select id="coordinador" name="coordinador">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" class="borrador">Guardar como borrador</button>
+      <button type="submit" class="aprobar">Enviar para aprobación</button>
+    </div>
+  </form>
+
+</body>
+</html>
+
+

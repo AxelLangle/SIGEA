@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Evento</title>
+  <link rel="icon" href="{{ url_for('static', filename='SIGEA_LOGOTIPO200.png') }}" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+  <style>
+    :root {
+      --guinda: #811B49;
+      --dorado: #DCCB88;
+      --verde: #76C043;
+      --blanco: #fff;
+      --gris-claro: #F2F2F2;
+      --negro: #1C1C1C;
+    }
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: var(--gris-claro);
+      margin: 0;
+      padding: 0;
+    }
+    .sigea-header {
+      width: 100%;
+      height: 90px;
+      background: var(--guinda);
+      color: var(--blanco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.3rem;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 12px rgba(129,27,73,0.08);
+    }
+    h2 {
+      color: var(--guinda);
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+    }
+    form {
+      max-width: 650px;
+      margin: 40px auto;
+      background: var(--blanco);
+      padding: 32px 28px;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px rgba(129,27,73,0.10);
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 700;
+      color: var(--guinda);
+      letter-spacing: 0.03em;
+    }
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1.5px solid #C8C8C8;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--gris-claro);
+      font-family: 'Open Sans', Arial, sans-serif;
+      margin-bottom: 8px;
+    }
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--guinda);
+      outline: none;
+      background: #fff;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 24px;
+    }
+    button {
+      padding: 11px 28px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .borrador {
+      background-color: var(--dorado);
+      color: var(--negro);
+    }
+    .borrador:hover {
+      background-color: #e6d9a7;
+    }
+    .aprobar {
+      background-color: var(--guinda);
+      color: var(--blanco);
+    }
+    .aprobar:hover {
+      background-color: #a02a5d;
+    }
+  </style>
+</head>
+<body>
+  <div class="sigea-header">
+    SIGEA
+  </div>
+  <h2>REGISTRO DE EVENTO</h2>
+  <form>
+    <label for="titulo">Título del evento</label>
+    <input type="text" id="titulo" name="titulo">
+
+    <div class="row">
+      <div>
+        <label for="categoria">Categoría</label>
+        <select id="categoria" name="categoria">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="impacto">Impacto</label>
+        <select id="impacto" name="impacto">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="tematica">Temática</label>
+    <textarea id="tematica" name="tematica" rows="2"></textarea>
+
+    <label for="justificacion">Justificación</label>
+    <textarea id="justificacion" name="justificacion" rows="2"></textarea>
+
+    <label for="objetivo">Objetivo</label>
+    <textarea id="objetivo" name="objetivo" rows="2"></textarea>
+
+    <div class="row">
+      <div>
+        <label for="docente">Docente</label>
+        <select id="docente" name="docente">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="grupos">Grupos asignados</label>
+        <input type="text" id="grupos" name="grupos">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="docente2">Docente</label>
+        <select id="docente2" name="docente2">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+      <div>
+        <label for="coordinador">Coordinador (opcional)</label>
+        <select id="coordinador" name="coordinador">
+          <option value="">Seleccione</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button type="button" class="borrador">Guardar como borrador</button>
+      <button type="submit" class="aprobar">Enviar para aprobación</button>
+    </div>
+  </form>
+</body>
+</html>

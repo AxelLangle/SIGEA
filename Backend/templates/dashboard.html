@@ -151,7 +151,7 @@
   </div>
   <br>
   <div class="botones">
-      <button onclick="registrarEvento()">Registrar nuevo evento</button>
+      <button onclick="window.location.href='{{ url_for('registrar_evento') }}'">Registrar nuevo evento</button>
       <!-- Ejemplo de botón para subir archivo -->
       <label for="archivo">Subir archivo
         <input type="file" id="archivo" onchange="mostrarNombreArchivo()">
