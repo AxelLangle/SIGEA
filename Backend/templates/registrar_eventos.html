@@ -85,6 +85,26 @@
     .row > div {
       flex: 1;
     }
+
+    input[type="datetime-local"] {
+      width: 100%;
+      padding: 10px 14px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1.5px solid #C8C8C8;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--gris-claro);
+      font-family: 'Open Sans', Arial, sans-serif;
+      margin-bottom: 8px;
+      color: var(--negro);
+    }
+
+    input[type="datetime-local"]:focus {
+      border-color: var(--guinda);
+      outline: none;
+      background: #fff;
+    }
     .button-group {
       display: flex;
       justify-content: center;
@@ -200,7 +220,7 @@
     </div>
 
     <label for="tematica">Temática</label>
-    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central de evento"></textarea>
+    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central del evento"></textarea>
 
     <label for="justificacion">Justificación</label>
     <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento"></textarea>
