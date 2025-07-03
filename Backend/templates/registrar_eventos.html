@@ -92,14 +92,21 @@
       margin-top: 24px;
     }
     button {
-      padding: 11px 28px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: background 0.2s, color 0.2s;
-      letter-spacing: 0.03em;
+        padding: 8px 18px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        margin-left: 10px;
+        background-color: var(--guinda);
+        color: var(--blanco);
+        transition: background 0.2s, color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--dorado);
+      color: var(--negro);
     }
     .borrador {
       background-color: var(--dorado);
@@ -117,16 +124,20 @@
     }
 
     li button.desplegar {
-  background: transparent;
-  color: var(--guinda);
-  margin-left: 0;
-  margin-right: 10px;
-  font-size: 1.1em;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s;
-  padding: 0 6px;
-  }
+      background: transparent;
+      color: var(--guinda);
+      margin-left: 0;
+      margin-right: 10px;
+      font-size: 1.1em;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+      padding: 0 6px;
+    }
+    li button.desplegar:hover {
+      background: #f5e9f0;
+      color: var(--guinda);
+    } 
   ul {
   list-style: none;
   padding: 0;
@@ -189,27 +200,27 @@
     </div>
 
     <label for="tematica">Temática</label>
-    <textarea id="tematica" name="tematica" rows="5"></textarea>
+    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central de evento"></textarea>
 
     <label for="justificacion">Justificación</label>
-    <textarea id="justificacion" name="justificacion" rows="5"></textarea>
+    <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento"></textarea>
 
     <label for="objetivo">Objetivo</label>
-    <textarea id="objetivo" name="objetivo" rows="5"></textarea>
+    <textarea id="objetivo" name="objetivo" rows="5" placeholder="Escriba la meta que busca alcanzar con este evento"></textarea>
 
     <label for="dinamica">Dinámica</label>
-    <textarea id="dinamica" name="dinamica" rows="5"></textarea>
+    <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion"></textarea>
 
     <label for="fecha-hora">Selecciona fecha y hora del evento:</label>
     <input type="datetime-local" id="fecha-hora" name="fecha-hora">
 
     <label for="lugar">Lugar del evento</label>
-    <input type="text" id="lugar" name="lugar">
+    <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio">
 
     <!--Inicio lista editable-->
     <div class="main-container" style="box-shadow:none; padding:0; margin:0;">
-      <h3 style="color:var(--guinda); font-size:1.1rem; margin-bottom:10px;">Lista editable de actividades</h3>
-      <input type="text" id="entrada" placeholder="Escribe una actividad...">
+      <h3 style="color:var(--guinda); font-size:1.1rem; margin-bottom:10px;">Recursos solicitados</h3>
+      <input type="text" id="entrada" placeholder="Escriba los recursos que solicitara...">
       <button type="button" onclick="agregarElemento()">Agregar</button>
       <ul id="lista"></ul>
     </div>
