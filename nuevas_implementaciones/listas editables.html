@@ -93,9 +93,19 @@ li {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 100%;
+  overflow: hidden;
 }
 span {
   flex: 1;
+  min-width: 0;
+  /* Nuevo: el texto largo se corta y muestra ... */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  /* Opcional: para que el tooltip funcione bien */
+  cursor: pointer;
 }
 </style>
 </head>
@@ -111,6 +121,7 @@ span {
   </div>
   <script>
   function agregarElemento() {
+    
     const entrada = document.getElementById("entrada");
     const valor = entrada.value.trim();
     if (valor !== "") {
@@ -119,6 +130,7 @@ span {
 
       // Crear span para mostrar el texto
       const span = document.createElement("span");
+      span.title = valor; // Muestra el texto completo al pasar el mouse
       span.textContent = valor;
       span.ondblclick = function() {
         editarElemento(span);
