@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <title>Lista Editable</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
-
-<style>
+  <style>
 :root {
   --guinda: #811B49;
   --dorado: #DCCB88;
@@ -81,6 +80,17 @@ button:hover {
   background-color: var(--dorado);
   color: var(--negro);
 }
+li button.desplegar {
+  background: transparent;
+  color: var(--guinda);
+  margin-left: 0;
+  margin-right: 10px;
+  font-size: 1.1em;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0 6px;
+}
 ul {
   list-style: none;
   padding: 0;
@@ -95,19 +105,30 @@ li {
   justify-content: space-between;
   max-width: 100%;
   overflow: hidden;
+  flex-wrap: wrap;
+  position: relative;
 }
 span {
   flex: 1;
   min-width: 0;
-  /* Nuevo: el texto largo se corta y muestra ... */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  /* Opcional: para que el tooltip funcione bien */
   cursor: pointer;
 }
-</style>
+.detalle-div {
+  width: 100%;
+  background: #f5e9f0;
+  color: var(--guinda);
+  padding: 8px 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  font-size: 0.98em;
+  word-break: break-word;
+  display: none;
+}
+  </style>
 </head>
 <body>
   <div class="sigea-header">
@@ -121,19 +142,34 @@ span {
   </div>
   <script>
   function agregarElemento() {
-    
     const entrada = document.getElementById("entrada");
     const valor = entrada.value.trim();
     if (valor !== "") {
       const lista = document.getElementById("lista");
       const li = document.createElement("li");
 
-      // Crear span para mostrar el texto
+      // Botón desplegable ">
+      const btnDesplegar = document.createElement("button");
+      btnDesplegar.innerHTML = "&#x25B6;"; // Triángulo apuntando a la derecha
+      btnDesplegar.title = "Mostrar/Ocultar";
+      btnDesplegar.className = "desplegar";
+      btnDesplegar.onclick = function(e) {
+        e.stopPropagation();
+        if (detalleDiv.style.display === "none") {
+          detalleDiv.style.display = "block";
+          btnDesplegar.innerHTML = "&#9662;"; // Triángulo hacia abajo
+        } else {
+          detalleDiv.style.display = "none";
+          btnDesplegar.innerHTML = "&#x25B6;"; // Triángulo hacia la derecha
+        }
+      };
+
+      // Crear span para mostrar el texto (resumido)
       const span = document.createElement("span");
-      span.title = valor; // Muestra el texto completo al pasar el mouse
+      span.title = valor;
       span.textContent = valor;
       span.ondblclick = function() {
-        editarElemento(span);
+        editarElemento(span, detalleDiv);
       };
 
       // Crear botón de eliminar con ícono
@@ -144,14 +180,21 @@ span {
         lista.removeChild(li);
       };
 
+      // Área de detalle (desplegable)
+      const detalleDiv = document.createElement("div");
+      detalleDiv.className = "detalle-div";
+      detalleDiv.textContent = valor;
+
+      li.appendChild(btnDesplegar);
       li.appendChild(span);
       li.appendChild(btnEliminar);
+      li.appendChild(detalleDiv);
       lista.appendChild(li);
       entrada.value = "";
     }
   }
 
-  function editarElemento(span) {
+  function editarElemento(span, detalleDiv) {
     const textoOriginal = span.textContent;
     const input = document.createElement("input");
     input.type = "text";
@@ -159,9 +202,12 @@ span {
     input.className = "edicion";
 
     input.onblur = function() {
-      span.textContent = input.value.trim() || textoOriginal;
+      const nuevoValor = input.value.trim() || textoOriginal;
+      span.textContent = nuevoValor;
+      span.title = nuevoValor;
+      if (detalleDiv) detalleDiv.textContent = nuevoValor;
       span.ondblclick = function() {
-        editarElemento(span);
+        editarElemento(span, detalleDiv);
       };
       span.style.display = "inline";
       input.remove();
@@ -179,7 +225,7 @@ span {
       agregarElemento();
     }
   });
-</script>
+  </script>
 </body>
 </html>
-  
+
