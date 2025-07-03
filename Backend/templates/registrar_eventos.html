@@ -105,6 +105,27 @@
       outline: none;
       background: #fff;
     }
+
+    input[type="number"] {
+      width: 100px;
+      padding: 10px 14px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1.5px solid #C8C8C8;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--gris-claro);
+      font-family: 'Open Sans', Arial, sans-serif;
+      margin-bottom: 8px;
+      color: var(--negro);
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--guinda);
+      outline: none;
+      background: #fff;
+    }
+
     .button-group {
       display: flex;
       justify-content: center;
@@ -231,11 +252,12 @@
     <label for="dinamica">Dinámica</label>
     <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion"></textarea>
 
-    <label for="fecha-hora">Selecciona fecha y hora del evento:</label>
-    <input type="datetime-local" id="fecha-hora" name="fecha-hora">
-
     <label for="lugar">Lugar del evento</label>
     <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio">
+
+    <label for="num-dias">¿Cuántos días durará el evento?</label>
+    <input type="number" id="num-dias" name="num-dias" min="1" max="30" value="1" style="width: 80px; margin-bottom: 12px;">
+    <div id="fechas-dias"></div>
 
     <!--Inicio lista editable-->
     <div class="main-container" style="box-shadow:none; padding:0; margin:0;">
@@ -371,6 +393,46 @@
       agregarElemento();
     }
   });
+
+  <!-- Script para manejar la creación de fechas dinámicas -->
+  // Generar inputs datetime-local según el número de días
+  function generarInputsFechas() {
+    const numDias = parseInt(document.getElementById("num-dias").value) || 1;
+    const contenedor = document.getElementById("fechas-dias");
+    contenedor.innerHTML = "";
+    for (let i = 1; i <= numDias; i++) {
+      const label = document.createElement("label");
+      label.setAttribute("for", "fecha-dia-" + i);
+      label.style.display = "block";
+      label.style.marginTop = "10px";
+      label.style.fontWeight = "700";
+      label.style.color = "var(--guinda)";
+      label.textContent = `Fecha y hora del día ${i}:`;
+
+      const input = document.createElement("input");
+      input.type = "datetime-local";
+      input.id = "fecha-dia-" + i;
+      input.name = "fecha-dia-" + i;
+      input.style.width = "100%";
+      input.style.padding = "10px 14px";
+      input.style.marginTop = "5px";
+      input.style.boxSizing = "border-box";
+      input.style.border = "1.5px solid #C8C8C8";
+      input.style.borderRadius = "8px";
+      input.style.fontSize = "1rem";
+      input.style.background = "var(--gris-claro)";
+      input.style.fontFamily = "'Open Sans', Arial, sans-serif";
+      input.style.marginBottom = "8px";
+      input.style.color = "var(--negro)";
+
+      contenedor.appendChild(label);
+      contenedor.appendChild(input);
+    }
+  }
+
+  // Inicializa y escucha cambios
+  document.getElementById("num-dias").addEventListener("input", generarInputsFechas);
+  window.addEventListener("DOMContentLoaded", generarInputsFechas);
 </script>
 </body>
 </html>
