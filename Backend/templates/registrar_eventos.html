@@ -255,9 +255,24 @@
     <label for="lugar">Lugar del evento</label>
     <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio" required>
 
-    <label for="num-dias">¿Cuántos días durará el evento?</label>
-    <input type="number" id="num-dias" name="num-dias" min="1" max="30" value="1" style="width: 80px; margin-bottom: 12px;" required>
-    <div id="fechas-dias"></div>
+    <div class="row">
+    <div>
+      <label for="num-dias">¿Cuántos días durará el evento?</label>
+      <input type="number" id="num-dias" name="num-dias" min="1" max="30" value="1" style="width: 80px; margin-bottom: 12px;" required>
+      <div id="fechas-dias"></div>
+    </div>
+
+    <div>
+      <label for="periodo_cuatrimestral">Periodo cuatrimestral</label>
+      <select id="periodo_cuatrimestral" name="periodo_cuatrimestral" required>
+          <option value="">Seleccione cuatrimestre</option>
+          <option  value="enero_abril">Enero - Abril</option>
+          <option  value="mayo_agosto">Mayo - Agosto</option>
+          <option  value="septiembre_diciembre">Septiembre - Diciembre</option>
+          
+      </select>
+    </div>
+    </div>
 
     <!--Inicio lista editable-->
     <div class="main-container" style="box-shadow:none; padding:0; margin:0;">
