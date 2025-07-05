@@ -216,6 +216,21 @@
         word-break: break-word;
         display: none;
       }
+      .agregar-opcion {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+        align-items: center;
+      }
+      .agregar-opcion input[type="text"] {
+        width: 70%;
+        margin-bottom: 0;
+      }
+      .agregar-opcion button {
+        margin-left: 0;
+        padding: 8px 12px;
+        font-size: 1.1em;
+      }
   </style>
 </head>
 <body>
@@ -258,7 +273,7 @@
     <div class="row">
     <div>
       <label for="num-dias">¿Cuántos días durará el evento?</label>
-      <input type="number" id="num-dias" name="num-dias" min="1" max="30" value="1" style="width: 80px; margin-bottom: 12px;" required>
+      <input type="number" id="num-dias" name="num-dias" min="1" max="30" value="1" required>
       <div id="fechas-dias"></div>
     </div>
 
@@ -269,7 +284,6 @@
           <option  value="enero_abril">Enero - Abril</option>
           <option  value="mayo_agosto">Mayo - Agosto</option>
           <option  value="septiembre_diciembre">Septiembre - Diciembre</option>
-          
       </select>
     </div>
     </div>
@@ -283,33 +297,32 @@
     </div>
     <!--Fin lista editable-->
 
-    <div class="row">
       <div>
         <label for="docente">Docente</label>
         <select id="docente" name="docente" required>
           <option value="">Seleccione docente</option>
         </select>
+        <div class="agregar-opcion">
+          <input type="text" id="nuevo-docente" placeholder="Agregar docente...">
+          <button type="button" onclick="agregarDocente()">+</button>
+        </div>
       </div>
       <div>
         <label for="grupos">Grupos asignados</label>
         <input type="text" id="grupos" name="grupos" placeholder="Seleccione los grupos que asistiran" required>
       </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <label for="docente2">Docente</label>
-        <select id="docente2" name="docente2" required>
-          <option value="">Seleccione docente</option>
-        </select>
-      </div>
+    
       <div>
         <label for="coordinador">Coordinador (opcional)</label>
         <select id="coordinador" name="coordinador" required>
           <option value="">Seleccione</option>
         </select>
+        <div class="agregar-opcion">
+          <input type="text" id="nuevo-coordinador" placeholder="Agregar coordinador...">
+          <button type="button" onclick="agregarCoordinador()">+</button>
+        </div>
       </div>
-    </div>
+    
 
     <div class="button-group">
       <button type="button" class="borrador">Guardar como borrador</button>
@@ -317,8 +330,8 @@
     </div>
   </form>
 
-  <!--Script lista editable-->
 <script>
+  // Lista editable de recursos
   function agregarElemento() {
     const entrada = document.getElementById("entrada");
     const valor = entrada.value.trim();
@@ -328,7 +341,7 @@
 
       // Botón desplegable ">"
       const btnDesplegar = document.createElement("button");
-      btnDesplegar.type = "button"; // ¡Evita recarga de página!
+      btnDesplegar.type = "button";
       btnDesplegar.innerHTML = "&#x25B6;";
       btnDesplegar.title = "Mostrar/Ocultar";
       btnDesplegar.className = "desplegar";
@@ -354,7 +367,7 @@
 
       // Crear botón de eliminar con ícono
       const btnEliminar = document.createElement("button");
-      btnEliminar.type = "button"; // ¡Evita recarga de página!
+      btnEliminar.type = "button";
       btnEliminar.innerHTML = "🗑";
       btnEliminar.title = "Eliminar";
       btnEliminar.onclick = function(e) {
@@ -366,7 +379,7 @@
       const detalleDiv = document.createElement("div");
       detalleDiv.className = "detalle-div";
       detalleDiv.textContent = valor;
-      detalleDiv.style.display = "none"; // ¡Siempre oculto al inicio!
+      detalleDiv.style.display = "none";
 
       li.appendChild(btnDesplegar);
       li.appendChild(span);
@@ -409,8 +422,7 @@
     }
   });
 
-  <!-- Script para manejar la creación de fechas dinámicas -->
-  // Generar inputs datetime-local según el número de días
+  // Script para manejar la creación de fechas dinámicas
   function generarInputsFechas() {
     const numDias = parseInt(document.getElementById("num-dias").value) || 1;
     const contenedor = document.getElementById("fechas-dias");
@@ -445,9 +457,62 @@
     }
   }
 
-  // Inicializa y escucha cambios
   document.getElementById("num-dias").addEventListener("input", generarInputsFechas);
   window.addEventListener("DOMContentLoaded", generarInputsFechas);
+
+  // --- DOCENTES Y COORDINADORES DINÁMICOS ---
+  function cargarOpcionesDesdeStorage() {
+    const docentes = JSON.parse(localStorage.getItem('docentesSIGEA') || '[]');
+    const coordinadores = JSON.parse(localStorage.getItem('coordinadoresSIGEA') || '[]');
+    actualizarSelect('docente', docentes);
+    actualizarSelect('docente2', docentes);
+    actualizarSelect('coordinador', coordinadores);
+  }
+
+  function actualizarSelect(id, opciones) {
+    const select = document.getElementById(id);
+    if (!select) return;
+    const placeholder = select.options[0];
+    select.innerHTML = '';
+    select.appendChild(placeholder);
+    opciones.forEach(nombre => {
+      const opt = document.createElement('option');
+      opt.value = nombre;
+      opt.textContent = nombre;
+      select.appendChild(opt);
+    });
+  }
+
+  function agregarDocente() {
+    const input = document.getElementById('nuevo-docente');
+    const nombre = input.value.trim();
+    if (nombre) {
+      let docentes = JSON.parse(localStorage.getItem('docentesSIGEA') || '[]');
+      if (!docentes.includes(nombre)) {
+        docentes.push(nombre);
+        localStorage.setItem('docentesSIGEA', JSON.stringify(docentes));
+        actualizarSelect('docente', docentes);
+        actualizarSelect('docente2', docentes);
+      }
+      input.value = '';
+    }
+  }
+
+  function agregarCoordinador() {
+    const input = document.getElementById('nuevo-coordinador');
+    const nombre = input.value.trim();
+    if (nombre) {
+      let coordinadores = JSON.parse(localStorage.getItem('coordinadoresSIGEA') || '[]');
+      if (!coordinadores.includes(nombre)) {
+        coordinadores.push(nombre);
+        localStorage.setItem('coordinadoresSIGEA', JSON.stringify(coordinadores));
+        actualizarSelect('coordinador', coordinadores);
+      }
+      input.value = '';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', cargarOpcionesDesdeStorage);
 </script>
 </body>
 </html>
