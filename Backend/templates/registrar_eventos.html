@@ -231,6 +231,52 @@
         padding: 8px 12px;
         font-size: 1.1em;
       }
+
+    .grupo-toggle-btn {
+      width: 100%;
+      background: var(--guinda);
+      color: var(--blanco);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      font-family: 'Open Sans', Arial, sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .grupo-toggle-btn:hover {
+      background: var(--dorado);
+      color: var(--negro);
+    }
+    .grupo-lista {
+      display: none;
+      background: var(--gris-claro);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(129,27,73,0.10);
+      padding: 12px;
+      position: absolute;
+      z-index: 10;
+      min-width: 220px;
+      max-height: 220px;
+      overflow-y: auto;
+      left: 0;
+      right: 0;
+    }
+    .grupo-lista label {
+      display: block;
+      cursor: pointer;
+      margin-bottom: 4px;
+      font-size: 1rem;
+      color: var(--guinda);
+      font-family: 'Open Sans', Arial, sans-serif;
+    }
+    .grupo-lista input[type="checkbox"] {
+      accent-color: var(--guinda);
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -308,8 +354,19 @@
         </div>
       </div>
       <div>
-        <label for="grupos">Grupos asignados</label>
-        <input type="text" id="grupos" name="grupos" placeholder="Seleccione los grupos que asistiran" required>
+        <label>Grupos asignados</label>
+        <br>
+        <div style="position:relative;">
+          <button type="button" id="toggle-grupos" class="grupo-toggle-btn">Seleccionar grupos ▼</button>
+          <div id="lista-grupos" class="grupo-lista">
+            <!-- Aquí se mostrarán los checkboxes -->
+          </div>
+          <div class="agregar-opcion" style="margin-top:8px;">
+            <input type="text" id="nuevo-grupo" placeholder="Agregar grupo...">
+            <button type="button" onclick="agregarGrupo()">+</button>
+          </div>
+          <div id="grupos-seleccionados" style="margin-top:8px; color:var(--guinda); font-size:0.98em;"></div>
+        </div>
       </div>
     
       <div>
@@ -513,6 +570,74 @@
   }
 
   window.addEventListener('DOMContentLoaded', cargarOpcionesDesdeStorage);
+
+  // --- GRUPOS DINÁMICOS ---
+  // --- GRUPOS DINÁMICOS CON CHECKBOXES Y DESPLEGABLE ---
+  function cargarGruposDesdeStorage() {
+    const grupos = JSON.parse(localStorage.getItem('gruposSIGEA') || '[]');
+    actualizarListaGrupos(grupos);
+  }
+
+  function actualizarListaGrupos(grupos) {
+    const lista = document.getElementById('lista-grupos');
+    lista.innerHTML = '';
+    grupos.forEach(grupo => {
+      const id = 'grupo_' + grupo.replace(/\s+/g, '_');
+      const label = document.createElement('label');
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = grupo;
+      checkbox.id = id;
+      checkbox.name = 'grupos_asignados';
+
+      checkbox.onchange = mostrarGruposSeleccionados;
+
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(' ' + grupo));
+      lista.appendChild(label);
+    });
+  }
+
+  function agregarGrupo() {
+    const input = document.getElementById('nuevo-grupo');
+    const grupo = input.value.trim();
+    if (grupo) {
+      let grupos = JSON.parse(localStorage.getItem('gruposSIGEA') || '[]');
+      if (!grupos.includes(grupo)) {
+        grupos.push(grupo);
+        localStorage.setItem('gruposSIGEA', JSON.stringify(grupos));
+        actualizarListaGrupos(grupos);
+      }
+      input.value = '';
+    }
+  }
+
+  function mostrarGruposSeleccionados() {
+    const checkboxes = document.querySelectorAll('#lista-grupos input[type="checkbox"]:checked');
+    const seleccionados = Array.from(checkboxes).map(cb => cb.value);
+    document.getElementById('grupos-seleccionados').textContent =
+      seleccionados.length ? 'Seleccionados: ' + seleccionados.join(', ') : '';
+  }
+
+  // Mostrar/ocultar lista de grupos
+  document.getElementById('toggle-grupos').addEventListener('click', function() {
+    const lista = document.getElementById('lista-grupos');
+    lista.style.display = (lista.style.display === 'none' || lista.style.display === '') ? 'block' : 'none';
+  });
+
+  // Cerrar el desplegable si se hace clic fuera
+  document.addEventListener('click', function(e) {
+    const lista = document.getElementById('lista-grupos');
+    const toggle = document.getElementById('toggle-grupos');
+    if (!lista.contains(e.target) && e.target !== toggle) {
+      lista.style.display = 'none';
+    }
+  });
+
+  // Inicializar grupos al cargar
+  window.addEventListener('DOMContentLoaded', cargarGruposDesdeStorage);
+
 </script>
 </body>
 </html>
