@@ -352,6 +352,7 @@
           <input type="text" id="nuevo-docente" placeholder="Agregar docente...">
           <button type="button" onclick="agregarDocente()">+</button>
         </div>
+        <div id="docentes-eliminables" style="margin-bottom:8px;"></div>
       </div>
       <div>
         <label>Grupos asignados</label>
@@ -367,6 +368,8 @@
           </div>
           <div id="grupos-seleccionados" style="margin-top:8px; color:var(--guinda); font-size:0.98em;"></div>
         </div>
+        <div id="grupos-eliminables" style="margin-bottom:8px;"></div>
+
       </div>
     
       <div>
@@ -374,10 +377,13 @@
         <select id="coordinador" name="coordinador" required>
           <option value="">Seleccione</option>
         </select>
+        
         <div class="agregar-opcion">
           <input type="text" id="nuevo-coordinador" placeholder="Agregar coordinador...">
           <button type="button" onclick="agregarCoordinador()">+</button>
         </div>
+
+        <div id="coordinadores-eliminables" style="margin-bottom:8px;"></div>
       </div>
     
 
@@ -553,6 +559,7 @@
       }
       input.value = '';
     }
+    renderDocentesEliminables();
   }
 
   function agregarCoordinador() {
@@ -567,6 +574,74 @@
       }
       input.value = '';
     }
+    renderCoordinadoresEliminables();
+  }
+
+  function eliminarDocente(nombre) {
+    let docentes = JSON.parse(localStorage.getItem('docentesSIGEA') || '[]');
+    docentes = docentes.filter(d => d !== nombre);
+    localStorage.setItem('docentesSIGEA', JSON.stringify(docentes));
+    actualizarSelect('docente', docentes);
+    actualizarSelect('docente2', docentes);
+    renderDocentesEliminables();
+  }
+
+  function renderDocentesEliminables() {
+    const docentes = JSON.parse(localStorage.getItem('docentesSIGEA') || '[]');
+    const cont = document.getElementById('docentes-eliminables');
+    if (!cont) return;
+    cont.innerHTML = '';
+    docentes.forEach(nombre => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '8px';
+      div.style.marginBottom = '2px';
+      div.innerHTML = `<span>${nombre}</span>`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.title = 'Eliminar';
+      btn.innerHTML = '🗑️';
+      btn.style.background = 'transparent';
+      btn.style.border = 'none';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => eliminarDocente(nombre);
+      div.appendChild(btn);
+      cont.appendChild(div);
+    });
+  }
+
+  function eliminarCoordinador(nombre) {
+    let coordinadores = JSON.parse(localStorage.getItem('coordinadoresSIGEA') || '[]');
+    coordinadores = coordinadores.filter(c => c !== nombre);
+    localStorage.setItem('coordinadoresSIGEA', JSON.stringify(coordinadores));
+    actualizarSelect('coordinador', coordinadores);
+    renderCoordinadoresEliminables();
+  }
+
+  function renderCoordinadoresEliminables() {
+    const coordinadores = JSON.parse(localStorage.getItem('coordinadoresSIGEA') || '[]');
+    const cont = document.getElementById('coordinadores-eliminables');
+    if (!cont) return;
+    cont.innerHTML = '';
+    coordinadores.forEach(nombre => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '8px';
+      div.style.marginBottom = '2px';
+      div.innerHTML = `<span>${nombre}</span>`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.title = 'Eliminar';
+      btn.innerHTML = '🗑️';
+      btn.style.background = 'transparent';
+      btn.style.border = 'none';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => eliminarCoordinador(nombre);
+      div.appendChild(btn);
+      cont.appendChild(div);
+    });
   }
 
   window.addEventListener('DOMContentLoaded', cargarOpcionesDesdeStorage);
@@ -611,6 +686,40 @@
       }
       input.value = '';
     }
+    renderGruposEliminables();
+  }
+
+  function eliminarGrupo(nombre) {
+    let grupos = JSON.parse(localStorage.getItem('gruposSIGEA') || '[]');
+    grupos = grupos.filter(g => g !== nombre);
+    localStorage.setItem('gruposSIGEA', JSON.stringify(grupos));
+    actualizarListaGrupos(grupos);
+    renderGruposEliminables();
+  }
+
+  function renderGruposEliminables() {
+    const grupos = JSON.parse(localStorage.getItem('gruposSIGEA') || '[]');
+    const cont = document.getElementById('grupos-eliminables');
+    if (!cont) return;
+    cont.innerHTML = '';
+    grupos.forEach(nombre => {
+      const div = document.createElement('div');
+      div.style.display = 'flex';
+      div.style.alignItems = 'center';
+      div.style.gap = '8px';
+      div.style.marginBottom = '2px';
+      div.innerHTML = `<span>${nombre}</span>`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.title = 'Eliminar';
+      btn.innerHTML = '🗑️';
+      btn.style.background = 'transparent';
+      btn.style.border = 'none';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => eliminarGrupo(nombre);
+      div.appendChild(btn);
+      cont.appendChild(div);
+    });
   }
 
   function mostrarGruposSeleccionados() {
@@ -635,8 +744,14 @@
     }
   });
 
-  // Inicializar grupos al cargar
-  window.addEventListener('DOMContentLoaded', cargarGruposDesdeStorage);
+  // Inicializar grupos, docentes y coordinadores al cargar
+  window.addEventListener('DOMContentLoaded', function() {
+    cargarOpcionesDesdeStorage();
+    cargarGruposDesdeStorage();
+    renderDocentesEliminables();
+    renderCoordinadoresEliminables();
+    renderGruposEliminables();
+  });
 
 </script>
 </body>
