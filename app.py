@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,6 +21,19 @@ def get_db_connection():
             apellido_materno TEXT NOT NULL,
             correo TEXT NOT NULL UNIQUE,
             contrasena TEXT NOT NULL
+        )''')
+        # Crear tablas nuevas si no existen
+        conn.execute('''CREATE TABLE IF NOT EXISTS docente (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT UNIQUE NOT NULL
+        )''')
+        conn.execute('''CREATE TABLE IF NOT EXISTS coordinador (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT UNIQUE NOT NULL
+        )''')
+        conn.execute('''CREATE TABLE IF NOT EXISTS grupo (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre TEXT UNIQUE NOT NULL
         )''')
         conn.commit()
     conn = sqlite3.connect(db_path)
@@ -94,6 +107,104 @@ def login():
 @app.route('/registrar_evento')
 def registrar_evento():
     return render_template('registrar_eventos.html')
+
+# ------------------- CRUD ENDPOINTS PARA DOCENTE, COORDINADOR Y GRUPO -------------------
+
+# --- DOCENTES ---
+@app.route('/api/docentes', methods=['GET'])
+def get_docentes():
+    conn = get_db_connection()
+    cur = conn.execute('SELECT id, nombre FROM docente ORDER BY nombre')
+    docentes = [dict(row) for row in cur.fetchall()]
+    conn.close()
+    return jsonify(docentes)
+
+@app.route('/api/docentes', methods=['POST'])
+def add_docente():
+    nombre = request.json.get('nombre', '').strip()
+    if not nombre:
+        return jsonify({'error': 'Nombre requerido'}), 400
+    conn = get_db_connection()
+    try:
+        conn.execute('INSERT INTO docente (nombre) VALUES (?)', (nombre,))
+        conn.commit()
+        return jsonify({'success': True})
+    except sqlite3.IntegrityError:
+        return jsonify({'error': 'Docente ya existe'}), 400
+    finally:
+        conn.close()
+
+@app.route('/api/docentes/<int:docente_id>', methods=['DELETE'])
+def delete_docente(docente_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM docente WHERE id = ?', (docente_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
+# --- COORDINADORES ---
+@app.route('/api/coordinadores', methods=['GET'])
+def get_coordinadores():
+    conn = get_db_connection()
+    cur = conn.execute('SELECT id, nombre FROM coordinador ORDER BY nombre')
+    coordinadores = [dict(row) for row in cur.fetchall()]
+    conn.close()
+    return jsonify(coordinadores)
+
+@app.route('/api/coordinadores', methods=['POST'])
+def add_coordinador():
+    nombre = request.json.get('nombre', '').strip()
+    if not nombre:
+        return jsonify({'error': 'Nombre requerido'}), 400
+    conn = get_db_connection()
+    try:
+        conn.execute('INSERT INTO coordinador (nombre) VALUES (?)', (nombre,))
+        conn.commit()
+        return jsonify({'success': True})
+    except sqlite3.IntegrityError:
+        return jsonify({'error': 'Coordinador ya existe'}), 400
+    finally:
+        conn.close()
+
+@app.route('/api/coordinadores/<int:coordinador_id>', methods=['DELETE'])
+def delete_coordinador(coordinador_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM coordinador WHERE id = ?', (coordinador_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
+# --- GRUPOS ---
+@app.route('/api/grupos', methods=['GET'])
+def get_grupos():
+    conn = get_db_connection()
+    cur = conn.execute('SELECT id, nombre FROM grupo ORDER BY nombre')
+    grupos = [dict(row) for row in cur.fetchall()]
+    conn.close()
+    return jsonify(grupos)
+
+@app.route('/api/grupos', methods=['POST'])
+def add_grupo():
+    nombre = request.json.get('nombre', '').strip()
+    if not nombre:
+        return jsonify({'error': 'Nombre requerido'}), 400
+    conn = get_db_connection()
+    try:
+        conn.execute('INSERT INTO grupo (nombre) VALUES (?)', (nombre,))
+        conn.commit()
+        return jsonify({'success': True})
+    except sqlite3.IntegrityError:
+        return jsonify({'error': 'Grupo ya existe'}), 400
+    finally:
+        conn.close()
+
+@app.route('/api/grupos/<int:grupo_id>', methods=['DELETE'])
+def delete_grupo(grupo_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM grupo WHERE id = ?', (grupo_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True)
