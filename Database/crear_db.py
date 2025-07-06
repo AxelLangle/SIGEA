@@ -2,6 +2,8 @@ import sqlite3
 
 conn = sqlite3.connect('usuarios.db')
 c = conn.cursor()
+
+# Tabla de usuarios (ya existente)
 c.execute('''
     CREATE TABLE IF NOT EXISTS usuarios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,8 +14,33 @@ c.execute('''
         contrasena TEXT NOT NULL
     )
 ''')
+
+# Nueva tabla de docentes
+c.execute('''
+    CREATE TABLE IF NOT EXISTS docente (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT UNIQUE NOT NULL
+    )
+''')
+
+# Nueva tabla de coordinadores
+c.execute('''
+    CREATE TABLE IF NOT EXISTS coordinador (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT UNIQUE NOT NULL
+    )
+''')
+
+# Nueva tabla de grupos
+c.execute('''
+    CREATE TABLE IF NOT EXISTS grupo (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT UNIQUE NOT NULL
+    )
+''')
+
 conn.commit()
 conn.close()
 
 if __name__ == '__main__':
-    print("Base de datos y tabla 'usuarios' creadas correctamente.")
+    print("Base de datos y tablas 'usuarios', 'docente', 'coordinador' y 'grupo' creadas correctamente.")
