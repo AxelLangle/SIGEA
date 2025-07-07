@@ -12,6 +12,7 @@ function mostrarNombreArchivo() {
     }
 }
 
+/*
 async function cargarBorradores() {
   const res = await fetch('/api/eventos/borrador');
   if (!res.ok) return;
@@ -30,5 +31,45 @@ async function cargarBorradores() {
   });
 }
 window.addEventListener('DOMContentLoaded', cargarBorradores);
+*/
 
+async function cargarEventosEnTabla() {
+  const res = await fetch('/api/eventos/usuario');
+  if (!res.ok) return;
+  const eventos = await res.json();
 
+  // Prepara arrays para cada estado
+  const columnas = {
+    'borrador': [],
+    'pendiente': [],
+    'terminado': [],
+    'reporte enviado': []
+  };
+
+  eventos.forEach(ev => {
+    const estado = ev.estado.toLowerCase();
+    let col = '';
+    if (estado === 'borrador') col = 'borrador';
+    else if (estado === 'pendiente' || estado === 'aprobado') col = 'pendiente';
+    else if (estado === 'terminado') col = 'terminado';
+    else if (estado === 'reporte enviado') col = 'reporte enviado';
+    else return;
+
+    columnas[col].push(
+      `<a href="/evento/${ev.id}" style="color:#811B49;font-weight:600;text-decoration:underline;cursor:pointer;">${ev.titulo}</a>`
+    );
+  });
+
+  // Llena la tabla (solo una fila, cada celda con los eventos de ese estado)
+  const tbody = document.querySelector('table tbody');
+  tbody.innerHTML = `
+    <tr>
+      <td>${columnas['borrador'].join('<br>') || '<span style="color:gray;">Sin eventos</span>'}</td>
+      <td>${columnas['pendiente'].join('<br>') || '<span style="color:gray;">Sin eventos</span>'}</td>
+      <td>${columnas['terminado'].join('<br>') || '<span style="color:gray;">Sin eventos</span>'}</td>
+      <td>${columnas['reporte enviado'].join('<br>') || '<span style="color:gray;">Sin eventos</span>'}</td>
+    </tr>
+  `;
+}
+
+window.addEventListener('DOMContentLoaded', cargarEventosEnTabla);
