@@ -99,6 +99,7 @@ def login():
 
     if user and check_password_hash(user['contrasena'], contrasena):
         session['nombre'] = user['nombre']
+        session['usuario_id'] = user['id']
         flash('Inicio de sesión exitoso')
         return redirect(url_for('dashboard'))
     else:
