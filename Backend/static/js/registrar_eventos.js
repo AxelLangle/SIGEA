@@ -138,6 +138,7 @@
   async function cargarDocentes() {
     const res = await fetch('/api/docentes');
     const docentes = await res.json();
+    
     actualizarSelect('docente', docentes);
     // Si tienes un segundo select de docente, descomenta la siguiente línea:
     // actualizarSelect('docente2', docentes);
