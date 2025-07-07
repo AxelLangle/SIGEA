@@ -317,6 +317,67 @@ def aprobar_evento():
     if not usuario_id:
         return jsonify({'error': 'No autenticado'}), 401
 
+    # 1. Validaciones de campos obligatorios
+    campos_obligatorios = ['titulo', 'tematica', 'justificacion', 'objetivo', 'dinamica', 'lugar', 'docente', 'coordinador']
+    for campo in campos_obligatorios:
+        if not datos.get(campo) or not str(datos.get(campo)).strip():
+            return jsonify({'error': f'El campo {campo} es obligatorio.'}), 400
+    if not datos.get('grupos_asignados') or not isinstance(datos['grupos_asignados'], list) or len(datos['grupos_asignados']) == 0:
+        return jsonify({'error': 'Selecciona al menos un grupo.'}), 400
+    if not datos.get('recursos_solicitados') or not isinstance(datos['recursos_solicitados'], list) or len(datos['recursos_solicitados']) == 0:
+        return jsonify({'error': 'Agrega al menos un recurso solicitado.'}), 400
+
+    # 2. Validaciones de formato y lógica
+    if len(datos['justificacion'].strip()) < 20:
+        return jsonify({'error': 'La justificación debe tener al menos 20 caracteres.'}), 400
+    if len(datos['objetivo'].strip()) < 10:
+        return jsonify({'error': 'El objetivo debe tener al menos 10 caracteres.'}), 400
+
+    # Fechas: al menos una válida y futura
+    from datetime import datetime
+    alguna_fecha_valida = False
+    for key, value in datos.items():
+        if key.startswith('fecha-dia-') and value:
+            try:
+                fecha = datetime.fromisoformat(value)
+                if fecha > datetime.now():
+                    alguna_fecha_valida = True
+            except Exception:
+                continue
+    if not alguna_fecha_valida:
+        return jsonify({'error': 'Debes ingresar al menos una fecha futura.'}), 400
+
+    # 3. Validación de unicidad (no permitir eventos con el mismo título para el mismo usuario en estado pendiente/aprobado)
+    conn = get_db_connection()
+    existe = conn.execute(
+        "SELECT id FROM evento WHERE usuario_id = ? AND LOWER(json_extract(datos, '$.titulo')) = ? AND estado IN ('aprobado', 'pendiente')",
+        (usuario_id, datos['titulo'].strip().lower())
+    ).fetchone()
+    if existe:
+        conn.close()
+        return jsonify({'error': 'Ya existe un evento con ese título en estado pendiente o aprobado.'}), 400
+
+    # 4. Guardado/actualización
+    borrador = conn.execute(
+        'SELECT id FROM evento WHERE usuario_id = ? AND estado = ?', (usuario_id, 'borrador')
+    ).fetchone()
+    if borrador:
+        conn.execute(
+            'UPDATE evento SET datos = ?, estado = ? WHERE id = ?', (json.dumps(datos), 'aprobado', borrador['id'])
+        )
+    else:
+        conn.execute(
+            'INSERT INTO evento (usuario_id, datos, estado) VALUES (?, ?, ?)',
+            (usuario_id, json.dumps(datos), 'aprobado')
+        )
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+    datos = request.json.get('datos')
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+
     conn = get_db_connection()
     # Busca si ya hay un borrador para este usuario
     borrador = conn.execute(
