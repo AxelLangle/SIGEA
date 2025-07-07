@@ -393,6 +393,10 @@
   });
 
   async function guardarBorrador() {
+    const btn = document.querySelector('.borrador');
+    btn.disabled = true;
+    btn.textContent = "Guardando...";
+
     // Recolecta todos los datos del formulario
     const form = document.querySelector('form');
     const formData = new FormData(form);
@@ -401,18 +405,9 @@
       datos[key] = value;
     });
 
-    // Aquí se recolectan los arrays dinámicos:
-    // Grupos asignados (checkboxes)
+    // Arrays dinámicos
     datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
-
-    // Lista editable de recursos (si tienes este campo)
     datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
-
-    // Fechas por día (opcional: como array)
-    // datos['fechas_dias'] = [];
-    // document.querySelectorAll('input[type="datetime-local"][name^="fecha-dia-"]').forEach(input => {
-    //   datos['fechas_dias'].push({ name: input.name, value: input.value });
-    // });
 
     // Envía los datos al backend como borrador
     const res = await fetch('/api/eventos/borrador', {
@@ -420,10 +415,18 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({datos: datos})
     });
+
     if (res.ok) {
-      alert('Borrador guardado correctamente');
-      // Opcional: redirigir o mostrar mensaje
+      // Mensaje visual (puedes usar un div flotante, aquí es simple)
+      btn.textContent = "¡Borrador guardado!";
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "Guardar como borrador";
+        window.location.href = "/dashboard"; // Redirige al dashboard
+      }, 800);
     } else {
+      btn.disabled = false;
+      btn.textContent = "Guardar como borrador";
       alert('Error al guardar borrador');
     }
   }
