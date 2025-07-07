@@ -68,7 +68,11 @@
     {% if evento.estado == 'borrador' %}
       <a href="{{ url_for('registrar_evento') }}?editar={{ evento.id }}" class="borrador">Editar borrador</a>
     {% endif %}
+    {% if evento.estado == 'aprobado' %}
+      <button class="borrador" onclick="regresarABorrador({{ evento.id }})">Regresar a borrador</button>
+    {% endif %}
     <a href="{{ url_for('dashboard') }}" class="volver">Volver al dashboard</a>
   </div>
+   <script src="{{ url_for('static', filename='js/registrar_eventos.js') }}"></script>
 </body>
 </html>

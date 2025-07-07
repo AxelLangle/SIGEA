@@ -289,5 +289,73 @@ def obtener_evento(evento_id):
     datos = json.loads(evento['datos'])
     return jsonify({'datos': datos, 'estado': evento['estado']})
 
+@app.route('/api/eventos/usuario', methods=['GET'])
+def obtener_eventos_usuario():
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+    conn = get_db_connection()
+    eventos = conn.execute(
+        "SELECT id, datos, estado FROM evento WHERE usuario_id = ?", (usuario_id,)
+    ).fetchall()
+    conn.close()
+    resultado = []
+    for row in eventos:
+        datos = json.loads(row['datos'])
+        resultado.append({
+            'id': row['id'],
+            'titulo': datos.get('titulo', 'Sin título'),
+            'estado': row['estado']
+        })
+    return jsonify(resultado)
+
+
+@app.route('/api/eventos/aprobar', methods=['POST'])
+def aprobar_evento():
+    datos = request.json.get('datos')
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+
+    conn = get_db_connection()
+    # Busca si ya hay un borrador para este usuario
+    borrador = conn.execute(
+        'SELECT id FROM evento WHERE usuario_id = ? AND estado = ?', (usuario_id, 'borrador')
+    ).fetchone()
+    if borrador:
+        # Actualiza el borrador existente a aprobado
+        conn.execute(
+            'UPDATE evento SET datos = ?, estado = ? WHERE id = ?', (json.dumps(datos), 'aprobado', borrador['id'])
+        )
+    else:
+        # Inserta nuevo evento aprobado
+        conn.execute(
+            'INSERT INTO evento (usuario_id, datos, estado) VALUES (?, ?, ?)',
+            (usuario_id, json.dumps(datos), 'aprobado')
+        )
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
+@app.route('/api/eventos/<int:evento_id>/a_borrador', methods=['POST'])
+def evento_a_borrador(evento_id):
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+    conn = get_db_connection()
+    evento = conn.execute(
+        "SELECT * FROM evento WHERE id = ? AND usuario_id = ?", (evento_id, usuario_id)
+    ).fetchone()
+    if not evento:
+        conn.close()
+        return jsonify({'error': 'Evento no encontrado'}), 404
+    # Cambia el estado a 'borrador'
+    conn.execute(
+        "UPDATE evento SET estado = ? WHERE id = ?", ('borrador', evento_id)
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
 if __name__ == '__main__':
     app.run(debug=True)
