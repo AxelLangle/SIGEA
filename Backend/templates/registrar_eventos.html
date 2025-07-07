@@ -14,7 +14,7 @@
   <h2>REGISTRO DE EVENTO</h2>
   <form>
     <label for="titulo">Título del evento</label>
-    <input type="text" id="titulo" name="titulo" placeholder="Ingrese el título del evento" required>
+    <input type="text" id="titulo" name="titulo" placeholder="Ingrese el título del evento" spellcheck="true" required>
 
     <div class="row">
       <div>
@@ -25,24 +25,24 @@
       </div>
       <div>
         <label for="impacto">Impacto</label>
-        <textarea id="impacto" name="impacto" rows="2" placeholder="Escriba el impacto que se busca lograr" required></textarea>
+        <textarea id="impacto" name="impacto" rows="2" placeholder="Escriba el impacto que se busca lograr" spellcheck="true" required></textarea>
       </div>
     </div>
 
     <label for="tematica">Temática</label>
-    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central del evento" required></textarea>
+    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central del evento" spellcheck="true" required></textarea>
 
     <label for="justificacion">Justificación</label>
-    <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento" required></textarea>
+    <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento" spellcheck="true" required></textarea>
 
     <label for="objetivo">Objetivo</label>
-    <textarea id="objetivo" name="objetivo" rows="5" placeholder="Escriba la meta que busca alcanzar con este evento" required></textarea>
+    <textarea id="objetivo" name="objetivo" rows="5" placeholder="Escriba la meta que busca alcanzar con este evento" spellcheck="true" required></textarea>
 
     <label for="dinamica">Dinámica</label>
-    <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion" required></textarea>
+    <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion" spellcheck="true" required></textarea>
 
     <label for="lugar">Lugar del evento</label>
-    <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio" required>
+    <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio" spellcheck="true" required>
 
     <div class="row">
     <div>
@@ -65,7 +65,7 @@
     <!--Inicio lista editable-->
     <div class="main-container" style="box-shadow:none; padding:0; margin:0;">
       <h3 style="color:var(--guinda); font-size:1.1rem; margin-bottom:10px;">Recursos solicitados</h3>
-      <input type="text" id="entrada" placeholder="Escriba los recursos que solicitara..." required>
+      <input type="text" id="entrada" placeholder="Escriba los recursos que solicitara..." spellcheck="true"required>
       <button type="button" onclick="agregarElemento()">Agregar</button>
       <ul id="lista"></ul>
     </div>
@@ -77,7 +77,7 @@
           <option value="">Seleccione docente</option>
         </select>
         <div class="agregar-opcion">
-          <input type="text" id="nuevo-docente" placeholder="Agregar docente...">
+          <input type="text" id="nuevo-docente" placeholder="Agregar docente..." spellcheck="true">
           <button type="button" onclick="agregarDocente()">+</button>
           <button type="button" id="toggle-eliminar-docente" class="eliminar-toggle-btn">Eliminar docente</button>
         </div>
@@ -92,7 +92,7 @@
             <!-- Aquí se mostrarán los checkboxes -->
           </div>
           <div class="agregar-opcion" style="margin-top:8px;">
-            <input type="text" id="nuevo-grupo" placeholder="Agregar grupo...">
+            <input type="text" id="nuevo-grupo" placeholder="Agregar grupo..." spellcheck="true">
             <button type="button" onclick="agregarGrupo()">+</button>
             <button type="button" id="toggle-eliminar-grupo" class="eliminar-toggle-btn">Eliminar grupo</button>
           </div>
@@ -109,7 +109,7 @@
         </select>
         
         <div class="agregar-opcion">
-          <input type="text" id="nuevo-coordinador" placeholder="Agregar coordinador...">
+          <input type="text" id="nuevo-coordinador" placeholder="Agregar coordinador..." spellcheck="true">
           <button type="button" onclick="agregarCoordinador()">+</button>
           <button type="button" id="toggle-eliminar-coordinador" class="eliminar-toggle-btn">Eliminar coordinador</button>
         </div>
