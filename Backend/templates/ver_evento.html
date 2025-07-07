@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ datos.titulo or 'Evento' }}</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/SIGEA_LOGOTIPO200.png') }}" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/registrar_eventos.css') }}">
+  <style>
+    .evento-info {
+      background: var(--blanco, #fff);
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(129,27,73,0.10);
+      padding: 32px 28px;
+      max-width: 650px;
+      margin: 40px auto;
+    }
+    .evento-info h2 {
+      color: var(--guinda, #811B49);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+    }
+    .evento-info p {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+      color: var(--negro, #1C1C1C);
+    }
+    .evento-info .borrador {
+      background-color: var(--dorado, #DCCB88);
+      color: var(--negro, #1C1C1C);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: 18px;
+      margin-right: 10px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, color 0.2s;
+    }
+    .evento-info .borrador:hover {
+      background-color: #e6d9a7;
+      color: var(--guinda, #811B49);
+    }
+    .evento-info .volver {
+      color: var(--guinda, #811B49);
+      text-decoration: underline;
+      font-size: 1rem;
+      margin-left: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sigea-header">SIGEA</div>
+  <div class="evento-info">
+    <h2>{{ datos.titulo or 'Sin título' }}</h2>
+    <p><b>Estado:</b> {{ evento.estado|capitalize }}</p>
+    <p><b>Temática:</b> {{ datos.tematica or 'No especificada' }}</p>
+    <p><b>Justificación:</b> {{ datos.justificacion or 'No especificada' }}</p>
+    <p><b>Objetivo:</b> {{ datos.objetivo or 'No especificado' }}</p>
+    <p><b>Dinámica:</b> {{ datos.dinamica or 'No especificada' }}</p>
+    <p><b>Lugar:</b> {{ datos.lugar or 'No especificado' }}</p>
+    <!-- Agrega aquí más campos según tu formulario -->
+
+    {% if evento.estado == 'borrador' %}
+      <a href="{{ url_for('registrar_evento') }}?editar={{ evento.id }}" class="borrador">Editar borrador</a>
+    {% endif %}
+    <a href="{{ url_for('dashboard') }}" class="volver">Volver al dashboard</a>
+  </div>
+</body>
+</html>

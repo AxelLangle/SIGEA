@@ -401,9 +401,18 @@
       datos[key] = value;
     });
 
-    // Puedes agregar lógica para recolectar listas, checkboxes, etc.
-    // Ejemplo para grupos asignados (checkboxes):
+    // Aquí se recolectan los arrays dinámicos:
+    // Grupos asignados (checkboxes)
     datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
+
+    // Lista editable de recursos (si tienes este campo)
+    datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
+
+    // Fechas por día (opcional: como array)
+    // datos['fechas_dias'] = [];
+    // document.querySelectorAll('input[type="datetime-local"][name^="fecha-dia-"]').forEach(input => {
+    //   datos['fechas_dias'].push({ name: input.name, value: input.value });
+    // });
 
     // Envía los datos al backend como borrador
     const res = await fetch('/api/eventos/borrador', {
@@ -419,6 +428,89 @@
     }
   }
 
+  function rellenarFormulario(datos) {
+    // Campos simples (input, textarea, select)
+    for (const key in datos) {
+      if (!datos.hasOwnProperty(key)) continue;
+      const campo = document.querySelector(`[name="${key}"]`);
+      if (campo) {
+        if (campo.type === 'checkbox') {
+          campo.checked = Array.isArray(datos[key]) ? datos[key].includes(campo.value) : !!datos[key];
+        } else if (campo.type === 'radio') {
+          if (campo.value === datos[key]) campo.checked = true;
+        } else {
+          campo.value = datos[key];
+        }
+      }
+    }
+
+    // Grupos asignados (checkboxes múltiples)
+    if (Array.isArray(datos.grupos_asignados)) {
+      document.querySelectorAll('input[name="grupos_asignados"]').forEach(cb => {
+        cb.checked = datos.grupos_asignados.includes(cb.value);
+      });
+      // Actualiza la visualización de seleccionados
+      mostrarGruposSeleccionados();
+    }
+
+    // Fechas por día (si las guardas como fecha-dia-1, fecha-dia-2, etc.)
+    Object.keys(datos).forEach(key => {
+      if (key.startsWith('fecha-dia-')) {
+        const input = document.getElementById(key);
+        if (input) input.value = datos[key];
+      }
+    });
+
+    // Lista editable de recursos (si guardas como array)
+    if (Array.isArray(datos.recursos_solicitados)) {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+      datos.recursos_solicitados.forEach(valor => {
+        const li = document.createElement("li");
+        const btnDesplegar = document.createElement("button");
+        btnDesplegar.type = "button";
+        btnDesplegar.innerHTML = "&#x25B6;";
+        btnDesplegar.title = "Mostrar/Ocultar";
+        btnDesplegar.className = "desplegar";
+        const detalleDiv = document.createElement("div");
+        detalleDiv.className = "detalle-div";
+        detalleDiv.textContent = valor;
+        detalleDiv.style.display = "none";
+        btnDesplegar.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (detalleDiv.style.display === "none") {
+            detalleDiv.style.display = "block";
+            btnDesplegar.innerHTML = "&#9662;";
+          } else {
+            detalleDiv.style.display = "none";
+            btnDesplegar.innerHTML = "&#x25B6;";
+          }
+        };
+        const span = document.createElement("span");
+        span.title = valor;
+        span.textContent = valor;
+        span.ondblclick = function() {
+          editarElemento(span, detalleDiv);
+        };
+        const btnEliminar = document.createElement("button");
+        btnEliminar.type = "button";
+        btnEliminar.innerHTML = "🗑";
+        btnEliminar.title = "Eliminar";
+        btnEliminar.onclick = function(e) {
+          e.preventDefault();
+          lista.removeChild(li);
+        };
+        li.appendChild(btnDesplegar);
+        li.appendChild(span);
+        li.appendChild(btnEliminar);
+        li.appendChild(detalleDiv);
+        lista.appendChild(li);
+      });
+    }
+  }
+
+
   /* =======================
     6. INICIALIZACIÓN
     ======================= */
@@ -427,4 +519,17 @@
     cargarCoordinadores();
     cargarGrupos();
     generarInputsFechas();
+
+    // Detectar si hay un parámetro ?editar=ID
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('editar')) {
+      const eventoId = params.get('editar');
+      fetch(`/api/eventos/${eventoId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.datos) {
+            rellenarFormulario(data.datos);
+          }
+        });
+    }
   });

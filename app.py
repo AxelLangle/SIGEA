@@ -235,5 +235,58 @@ def guardar_borrador():
     conn.close()
     return jsonify({'success': True})
 
+
+@app.route('/api/eventos/borrador', methods=['GET'])
+def obtener_borradores():
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+    conn = get_db_connection()
+    borradores = conn.execute(
+        "SELECT id, datos FROM evento WHERE usuario_id = ? AND estado = 'borrador'",
+        (usuario_id,)
+    ).fetchall()
+    conn.close()
+    # Extraer el título del evento desde los datos JSON
+    eventos = []
+    for row in borradores:
+        datos = json.loads(row['datos'])
+        eventos.append({
+            'id': row['id'],
+            'titulo': datos.get('titulo', 'Sin título')
+        })
+    return jsonify(eventos)
+
+@app.route('/evento/<int:evento_id>')
+def ver_evento(evento_id):
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return redirect(url_for('index'))
+    conn = get_db_connection()
+    evento = conn.execute(
+        "SELECT * FROM evento WHERE id = ? AND usuario_id = ?", (evento_id, usuario_id)
+    ).fetchone()
+    conn.close()
+    if not evento:
+        flash('Evento no encontrado')
+        return redirect(url_for('dashboard'))
+    datos = json.loads(evento['datos'])
+    return render_template('ver_evento.html', evento=evento, datos=datos)
+
+@app.route('/api/eventos/<int:evento_id>', methods=['GET'])
+def obtener_evento(evento_id):
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+    conn = get_db_connection()
+    evento = conn.execute(
+        "SELECT * FROM evento WHERE id = ? AND usuario_id = ?", (evento_id, usuario_id)
+    ).fetchone()
+    conn.close()
+    if not evento:
+        return jsonify({'error': 'Evento no encontrado'}), 404
+    datos = json.loads(evento['datos'])
+    return jsonify({'datos': datos, 'estado': evento['estado']})
+
 if __name__ == '__main__':
     app.run(debug=True)
