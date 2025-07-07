@@ -79,8 +79,9 @@
         <div class="agregar-opcion">
           <input type="text" id="nuevo-docente" placeholder="Agregar docente...">
           <button type="button" onclick="agregarDocente()">+</button>
+          <button type="button" id="toggle-eliminar-docente" class="eliminar-toggle-btn">Eliminar docente</button>
         </div>
-        <div id="docentes-eliminables" style="margin-bottom:8px;"></div>
+        <div id="docentes-eliminables" class="eliminables-lista"></div>
       </div>
       <div>
         <label>Grupos asignados</label>
@@ -93,10 +94,11 @@
           <div class="agregar-opcion" style="margin-top:8px;">
             <input type="text" id="nuevo-grupo" placeholder="Agregar grupo...">
             <button type="button" onclick="agregarGrupo()">+</button>
+            <button type="button" id="toggle-eliminar-grupo" class="eliminar-toggle-btn">Eliminar grupo</button>
           </div>
           <div id="grupos-seleccionados" style="margin-top:8px; color:var(--guinda); font-size:0.98em;"></div>
         </div>
-        <div id="grupos-eliminables" style="margin-bottom:8px;"></div>
+        <div id="grupos-eliminables" class="eliminables-lista"></div>
 
       </div>
     
@@ -109,9 +111,9 @@
         <div class="agregar-opcion">
           <input type="text" id="nuevo-coordinador" placeholder="Agregar coordinador...">
           <button type="button" onclick="agregarCoordinador()">+</button>
+          <button type="button" id="toggle-eliminar-coordinador" class="eliminar-toggle-btn">Eliminar coordinador</button>
         </div>
-
-        <div id="coordinadores-eliminables" style="margin-bottom:8px;"></div>
+        <div id="coordinadores-eliminables" class="eliminables-lista"></div>
       </div>
     
     <div class="button-group">

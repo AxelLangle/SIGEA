@@ -270,3 +270,32 @@
       accent-color: var(--guinda);
       margin-right: 6px;
     }
+
+
+    .eliminables-lista {
+      display: none;
+      background: var(--gris-claro);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(129,27,73,0.10);
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 8px;
+      min-width: 180px;
+      max-width: 350px;
+    }
+    .eliminar-toggle-btn {
+      background: var(--dorado);
+      color: var(--negro);
+      margin-left: 6px;
+      font-size: 0.98em;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+    .eliminar-toggle-btn:hover {
+      background: #e6d9a7;
+      color: var(--guinda);
+    }

@@ -359,6 +359,41 @@
     }
   });
 
+  // Mostrar/ocultar lista de docentes eliminables
+  document.getElementById('toggle-eliminar-docente').addEventListener('click', function() {
+    const lista = document.getElementById('docentes-eliminables');
+    lista.style.display = (lista.style.display === 'none' || lista.style.display === '') ? 'block' : 'none';
+  });
+
+  // Mostrar/ocultar lista de coordinadores eliminables
+  document.getElementById('toggle-eliminar-coordinador').addEventListener('click', function() {
+    const lista = document.getElementById('coordinadores-eliminables');
+    lista.style.display = (lista.style.display === 'none' || lista.style.display === '') ? 'block' : 'none';
+  });
+
+  // Mostrar/ocultar lista de grupos eliminables
+  document.getElementById('toggle-eliminar-grupo').addEventListener('click', function() {
+    const lista = document.getElementById('grupos-eliminables');
+    lista.style.display = (lista.style.display === 'none' || lista.style.display === '') ? 'block' : 'none';
+  });
+
+  // Opcional: Ocultar la lista si se hace clic fuera
+  document.addEventListener('click', function(e) {
+    [
+      {btn: 'toggle-eliminar-docente', lista: 'docentes-eliminables'},
+      {btn: 'toggle-eliminar-coordinador', lista: 'coordinadores-eliminables'},
+      {btn: 'toggle-eliminar-grupo', lista: 'grupos-eliminables'}
+    ].forEach(({btn, lista}) => {
+      const btnElem = document.getElementById(btn);
+      const listaElem = document.getElementById(lista);
+      if (listaElem && btnElem && !listaElem.contains(e.target) && e.target !== btnElem) {
+        listaElem.style.display = 'none';
+      }
+    });
+  });
+
+
+
   /* =======================
     6. INICIALIZACIÓN
     ======================= */
