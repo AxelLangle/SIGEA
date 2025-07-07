@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 import sqlite3
 import os
+import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, template_folder='Backend/templates', static_folder='Backend/static')
@@ -202,6 +203,34 @@ def add_grupo():
 def delete_grupo(grupo_id):
     conn = get_db_connection()
     conn.execute('DELETE FROM grupo WHERE id = ?', (grupo_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
+
+@app.route('/api/eventos/borrador', methods=['POST'])
+def guardar_borrador():
+    datos = request.json.get('datos')
+    usuario_id = session.get('usuario_id')  # Ajusta según tu sistema de login
+    if not usuario_id:
+        return jsonify({'error': 'No autenticado'}), 401
+
+    conn = get_db_connection()
+    # Busca si ya hay un borrador para este usuario
+    borrador = conn.execute(
+        'SELECT id FROM evento WHERE usuario_id = ? AND estado = ?', (usuario_id, 'borrador')
+    ).fetchone()
+    if borrador:
+        # Actualiza el borrador existente
+        conn.execute(
+            'UPDATE evento SET datos = ? WHERE id = ?', (json.dumps(datos), borrador['id'])
+        )
+    else:
+        # Inserta nuevo borrador
+        conn.execute(
+            'INSERT INTO evento (usuario_id, datos, estado) VALUES (?, ?, ?)',
+            (usuario_id, json.dumps(datos), 'borrador')
+        )
     conn.commit()
     conn.close()
     return jsonify({'success': True})

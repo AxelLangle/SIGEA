@@ -392,7 +392,32 @@
     });
   });
 
+  async function guardarBorrador() {
+    // Recolecta todos los datos del formulario
+    const form = document.querySelector('form');
+    const formData = new FormData(form);
+    let datos = {};
+    formData.forEach((value, key) => {
+      datos[key] = value;
+    });
 
+    // Puedes agregar lógica para recolectar listas, checkboxes, etc.
+    // Ejemplo para grupos asignados (checkboxes):
+    datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
+
+    // Envía los datos al backend como borrador
+    const res = await fetch('/api/eventos/borrador', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({datos: datos})
+    });
+    if (res.ok) {
+      alert('Borrador guardado correctamente');
+      // Opcional: redirigir o mostrar mensaje
+    } else {
+      alert('Error al guardar borrador');
+    }
+  }
 
   /* =======================
     6. INICIALIZACIÓN

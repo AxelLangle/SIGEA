@@ -39,6 +39,16 @@ c.execute('''
     )
 ''')
 
+# Nueva tabla de estado de eventos
+c.execute('''
+    CREATE TABLE IF NOT EXISTS evento (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usuario_id INTEGER,
+        datos TEXT, -- Aquí puedes guardar los datos del formulario en JSON
+        estado TEXT NOT NULL, -- 'borrador' o 'finalizado'
+        fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+''')
 conn.commit()
 conn.close()
 
