@@ -514,6 +514,44 @@
     }
   }
 
+  async function enviarParaAprobacion(e) {
+  e.preventDefault(); // Evita el submit normal del formulario
+  const btn = document.querySelector('.aprobar');
+  btn.disabled = true;
+  btn.textContent = "Enviando...";
+
+  // Recolecta todos los datos del formulario
+  const form = document.querySelector('form');
+  const formData = new FormData(form);
+  let datos = {};
+  formData.forEach((value, key) => {
+    datos[key] = value;
+  });
+
+  // Arrays dinámicos
+  datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
+  datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
+
+  // Envía los datos al backend como aprobado
+  const res = await fetch('/api/eventos/aprobar', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({datos: datos})
+  });
+
+  if (res.ok) {
+    btn.textContent = "¡Enviado!";
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = "Enviar para aprobación";
+      window.location.href = "/dashboard";
+    }, 800);
+  } else {
+    btn.disabled = false;
+    btn.textContent = "Enviar para aprobación";
+    alert('Error al enviar evento');
+  }
+}
 
   /* =======================
     6. INICIALIZACIÓN
@@ -523,6 +561,7 @@
     cargarCoordinadores();
     cargarGrupos();
     generarInputsFechas();
+
 
     // Detectar si hay un parámetro ?editar=ID
     const params = new URLSearchParams(window.location.search);
@@ -537,3 +576,5 @@
         });
     }
   });
+
+  document.querySelector('form').addEventListener('submit', enviarParaAprobacion);
