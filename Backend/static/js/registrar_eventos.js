@@ -532,6 +532,15 @@
   datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
   datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
 
+  // === VALIDACIÓN ANTES DE ENVIAR ===
+  const error = validarEvento(datos);
+  if (error) {
+    alert(error);
+    btn.disabled = false;
+    btn.textContent = "Enviar para aprobación";
+    return;
+  }
+
   // Envía los datos al backend como aprobado
   const res = await fetch('/api/eventos/aprobar', {
     method: 'POST',
@@ -552,6 +561,57 @@
     alert('Error al enviar evento');
   }
 }
+
+  function regresarABorrador(eventoId) {
+    if (!confirm("¿Seguro que deseas regresar este evento a borrador para editarlo?")) return;
+    fetch(`/api/eventos/${eventoId}/a_borrador`, {method: 'POST'})
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('El evento ahora es un borrador y puedes editarlo.');
+          window.location.href = `/registrar_evento?editar=${eventoId}`;
+        } else {
+          alert('No se pudo cambiar el estado. Intenta de nuevo.');
+        }
+      });
+  }
+
+  function validarEvento(datos) {
+    // 1. Campos obligatorios
+    if (!datos.titulo || datos.titulo.trim() === "") return "El título es obligatorio.";
+    if (!datos.tematica || datos.tematica.trim() === "") return "La temática es obligatoria.";
+    if (!datos.justificacion || datos.justificacion.trim() === "") return "La justificación es obligatoria.";
+    if (!datos.objetivo || datos.objetivo.trim() === "") return "El objetivo es obligatorio.";
+    if (!datos.dinamica || datos.dinamica.trim() === "") return "La dinámica es obligatoria.";
+    if (!datos.lugar || datos.lugar.trim() === "") return "El lugar es obligatorio.";
+    if (!datos.docente || datos.docente.trim() === "") return "Selecciona un docente.";
+    if (!datos.coordinador || datos.coordinador.trim() === "") return "Selecciona un coordinador.";
+    if (!Array.isArray(datos.grupos_asignados) || datos.grupos_asignados.length === 0) return "Selecciona al menos un grupo.";
+    if (!Array.isArray(datos.recursos_solicitados) || datos.recursos_solicitados.length === 0) return "Agrega al menos un recurso solicitado.";
+
+    // 2. Validaciones de formato y lógica
+    // Justificación y objetivo con longitud mínima
+    if (datos.justificacion.trim().length < 20) return "La justificación debe tener al menos 20 caracteres.";
+    if (datos.objetivo.trim().length < 10) return "El objetivo debe tener al menos 10 caracteres.";
+
+    // Fechas: al menos una válida y futura
+    const hoy = new Date();
+    let algunaFechaValida = false;
+    Object.keys(datos).forEach(key => {
+      if (key.startsWith('fecha-dia-') && datos[key]) {
+        const fecha = new Date(datos[key]);
+        if (fecha > hoy) algunaFechaValida = true;
+      }
+    });
+    if (!algunaFechaValida) return "Debes ingresar al menos una fecha futura.";
+
+    // 3. Validación de unicidad (título)
+    // Esta validación solo puede ser completa en el backend, pero puedes hacer una consulta rápida aquí si tienes los eventos cargados en JS.
+    // (Opcional: puedes omitirla aquí y dejarla solo en backend)
+
+    return null; // Sin errores
+  }
+
 
   /* =======================
     6. INICIALIZACIÓN
@@ -576,5 +636,6 @@
         });
     }
   });
+
 
   document.querySelector('form').addEventListener('submit', enviarParaAprobacion);
