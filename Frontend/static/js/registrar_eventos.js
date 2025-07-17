@@ -1,5 +1,18 @@
+  /*FUNCIONES PARA CORREGIR LA ORTOGRAFIA Y LAS MAYUSCULAS EN LOS PARRAFOS */
+  
+  function capitalizeParagraphs(text) {
+    return text.replace(/(^|\n)([a-záéíóúñ])/g, (m, sep, letra) => sep + letra.toUpperCase());
+  }
 
+  function nombrePropio(str) {
+    return str
+      .toLowerCase()
+      .replace(/(^|\s|\.)([a-záéíóúñ])/g, (m, sep, letra) => sep + letra.toUpperCase());
+  }
 
+  
+  
+  
   /* =======================
     1. LISTA EDITABLE DE RECURSOS
     ======================= */
@@ -149,6 +162,7 @@
     const input = document.getElementById('nuevo-docente');
     const nombre = input.value.trim();
     if (nombre) {
+      nombre = nombrePropio(nombre);
       const res = await fetch('/api/docentes', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -220,6 +234,7 @@
     const input = document.getElementById('nuevo-coordinador');
     const nombre = input.value.trim();
     if (nombre) {
+      nombre = nombrePropio(nombre);
       const res = await fetch('/api/coordinadores', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

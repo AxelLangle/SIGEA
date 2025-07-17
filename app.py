@@ -4,7 +4,7 @@ import os
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__, template_folder='Backend/templates', static_folder='Backend/static')
+app = Flask(__name__, template_folder='Frontend/templates', static_folder='Frontend/static')
 app.secret_key = 'tu_clave_secreta'
 
 def get_db_connection():

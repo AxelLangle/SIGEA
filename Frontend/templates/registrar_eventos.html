@@ -25,21 +25,21 @@
       </div>
       <div>
         <label for="impacto">Impacto</label>
-        <textarea id="impacto" name="impacto" rows="2" placeholder="Escriba el impacto que se busca lograr" spellcheck="true" required></textarea>
+        <textarea id="impacto" name="impacto" rows="2" placeholder="Escriba el impacto que se busca lograr" spellcheck="true" required onblur="this.value = capitalizeParagraphs(this.value)"></textarea>
       </div>
     </div>
 
     <label for="tematica">Temática</label>
-    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central del evento" spellcheck="true" required></textarea>
+    <textarea id="tematica" name="tematica" rows="5" placeholder="Escriba el tema central del evento" spellcheck="true" required onblur="this.value = capitalizeParagraphs(this.value)"></textarea>
 
     <label for="justificacion">Justificación</label>
-    <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento" spellcheck="true" required></textarea>
+    <textarea id="justificacion" name="justificacion" rows="5" placeholder="Escriba el motivo o la razon del evento" spellcheck="true" required onblur="this.value = capitalizeParagraphs(this.value)"></textarea>
 
     <label for="objetivo">Objetivo</label>
-    <textarea id="objetivo" name="objetivo" rows="5" placeholder="Escriba la meta que busca alcanzar con este evento" spellcheck="true" required></textarea>
+    <textarea id="objetivo" name="objetivo" rows="5" placeholder="Escriba la meta que busca alcanzar con este evento" spellcheck="true" required onblur="this.value = capitalizeParagraphs(this.value)"></textarea>
 
     <label for="dinamica">Dinámica</label>
-    <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion" spellcheck="true" required></textarea>
+    <textarea id="dinamica" name="dinamica" rows="5" placeholder= "Escriba la actividad o forma de participacion" spellcheck="true" required onblur="this.value = capitalizeParagraphs(this.value)"></textarea>
 
     <label for="lugar">Lugar del evento</label>
     <input type="text" id="lugar" name="lugar" placeholder="Ingrese lugar del evento. Ejemplo: Auditorio" spellcheck="true" required>
