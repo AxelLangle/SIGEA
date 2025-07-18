@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_file
 import sqlite3
 import os
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
+from docx import Document
 
 app = Flask(__name__, template_folder='Frontend/templates', static_folder='Frontend/static')
 app.secret_key = 'tu_clave_secreta'
@@ -398,6 +399,8 @@ def aprobar_evento():
     conn.close()
     return jsonify({'success': True})
 
+
+
 @app.route('/api/eventos/<int:evento_id>/a_borrador', methods=['POST'])
 def evento_a_borrador(evento_id):
     usuario_id = session.get('usuario_id')
@@ -417,6 +420,64 @@ def evento_a_borrador(evento_id):
     conn.commit()
     conn.close()
     return jsonify({'success': True})
+
+from docx import Document
+
+CAMPOS_EVENTO = {
+    "título": "titulo",
+    "titulo": "titulo",
+    "categoría": "categoria",
+    "impacto": "impacto",
+    "temática": "tematica",
+    "justificación": "justificacion",
+    "objetivo": "objetivo",
+    "dinámica": "dinamica",
+    "lugar del evento": "lugar",
+    "duración del evento": "duracion",
+    "periodo cuatrimestral": "periodo_cuatrimestral",
+    "recursos solicitados": "recursos",
+    "docente": "docente",
+    "grupos asignados": "grupos",
+    "coordinador": "coordinador"
+}
+
+def convertir_a_template(path_docx):
+    doc = Document(path_docx)
+    for p in doc.paragraphs:
+        texto = p.text.lower()
+        for clave, campo in CAMPOS_EVENTO.items():
+            if clave in texto:
+                p.text = p.text.replace(clave, f"{{{{ evento.{campo} }}}}")
+        if any(x in texto for x in [" de ", "/", "-"]) and any(d in texto for d in ["202", "19"]):
+            p.text = "{{ evento.fecha }}"
+        if "hora" in texto:
+            p.text = "{{ evento.hora }}"
+    doc.paragraphs.insert(0, doc.add_paragraph("{% for evento in eventos %}"))
+    doc.add_paragraph("{% endfor %}")
+    ruta_nueva = path_docx.replace("subidas", "editadas").replace(".docx", "_template.docx")
+    doc.save(ruta_nueva)
+    return ruta_nueva
+
+@app.route("/subir-plantilla", methods=["GET", "POST"])
+def subir_plantilla():
+    if request.method == "POST":
+        archivo = request.files["archivo"]
+        if archivo.filename.endswith(".docx"):
+            ruta_guardado = os.path.join("templates_plantillas_subidas", archivo.filename)
+            archivo.save(ruta_guardado)
+            plantilla_convertida = convertir_a_template(ruta_guardado)
+            # Aquí puedes guardar metadata en la BD si lo deseas
+            return send_file(plantilla_convertida, as_attachment=True)
+        else:
+            return "Formato no válido. Sube un archivo .docx"
+    return render_template("subir_plantilla.html")
+
+def guardar_metadata(nombre, archivo):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO plantillas (nombre, archivo, fecha_creacion) VALUES (?, ?, datetime('now'))", (nombre, archivo))
+    conn.commit()
+    conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

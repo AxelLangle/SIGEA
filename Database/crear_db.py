@@ -49,8 +49,19 @@ c.execute('''
         fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
 ''')
+
+
+#Nueva tabla plantillas
+c.execute('''
+    CREATE TABLE IF NOT EXISTS plantillas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        fecha_creacion TEXT
+    )
+''')
+
 conn.commit()
 conn.close()
 
 if __name__ == '__main__':
-    print("Base de datos y tablas 'usuarios', 'docente', 'coordinador' y 'grupo' creadas correctamente.")
+    print("Base de datos y tablas 'usuarios', 'docente', 'coordinador', 'grupo' y 'plantillas' creadas correctamente.")

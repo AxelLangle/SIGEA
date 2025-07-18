@@ -44,6 +44,7 @@
       <label for="archivo">Subir archivo
         <input type="file" id="archivo" onchange="mostrarNombreArchivo()">
       </label>
+      <button onclick="window.location.href='{{ url_for('subir_plantilla') }}'">Subir plantilla de oficio</button>
     </div>
 
     <div id="archivo-nombre"></div>
