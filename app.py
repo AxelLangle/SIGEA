@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from docx import Document
 from tempfile import NamedTemporaryFile
+from docx2pdf import convert
 import sqlite3
 import os
 import json
@@ -415,7 +416,6 @@ def evento_a_borrador(evento_id):
     conn.close()
     return jsonify({'success': True})
 
-from docx import Document
 
 CAMPOS_EVENTO = {
     "título": "titulo",
@@ -434,6 +434,12 @@ CAMPOS_EVENTO = {
     "grupos asignados": "grupos",
     "coordinador": "coordinador"
 }
+
+def docx_to_pdf(docx_path):
+    base_name = os.path.basename(docx_path).replace('.docx', '.pdf')
+    pdf_path = os.path.join('Frontend/static/templates_plantillas_editadas', base_name)
+    convert(docx_path, pdf_path)
+    return pdf_path
 
 def convertir_a_template(path_docx):
     doc = Document(path_docx)
@@ -487,8 +493,12 @@ def convertir_a_template(path_docx):
         elif "Horario:" in texto:
             p.text = "Horarios:"
             nuevos_parrafos.append("{% for hora in evento.horas %}{{ hora }}{% endfor %}")
+            
+        #12. Lugar del evento
+        elif "Luga:" in texto:
+            p.text = "Lugar: {{evento.lugar}}"
 
-        # 12. Recursos solicitados (lista)
+        # 13. Recursos solicitados (lista)
         elif "Recursos solicitados:" in texto:
             p.text = "Recursos solicitados:"
             nuevos_parrafos.append("{% for recurso in evento.recursos_solicitados %}• {{ recurso }}{% endfor %}")
@@ -510,23 +520,21 @@ def subir_plantilla():
     if request.method == "POST":
         archivo = request.files["archivo"]
         if archivo.filename.endswith(".docx"):
-            ruta_guardado = os.path.join("templates_plantillas_subidas", archivo.filename)
+            # Asegura que la carpeta existe
+            carpeta_subidas = "Frontend/static/templates_plantillas_subidas"
+            if not os.path.exists(carpeta_subidas):
+                os.makedirs(carpeta_subidas)
+            ruta_guardado = os.path.join(carpeta_subidas, archivo.filename)
             archivo.save(ruta_guardado)
             plantilla_convertida = convertir_a_template(ruta_guardado)
             
             # Guarda la metadata en la BD
             guardar_metadata(archivo.filename, plantilla_convertida)
             
-            # Leer el contenido para vista previa
-            doc = Document(plantilla_convertida)
-            contenido = []
-            for p in doc.paragraphs:
-                if p.text.strip():
-                    campos = re.findall(r'{{.*?}}', p.text)
-                    contenido.append({'texto': p.text, 'campos': campos})
-            
-            # Renderiza la vista previa
-            return render_template("vista_previa_plantilla.html", contenido=contenido, plantilla_path=plantilla_convertida)
+            # Convierte a PDF
+            pdf_path = docx_to_pdf(plantilla_convertida)
+            pdf_url = url_for('static', filename=f'templates_plantillas_editadas/{os.path.basename(pdf_path)}')
+            return render_template("vista_previa_plantilla.html", pdf_url=pdf_url, plantilla_path=plantilla_convertida)
         else:
             return "Formato no válido. Sube un archivo .docx"
     return render_template("subir_plantilla.html")
