@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_file
+from werkzeug.security import generate_password_hash, check_password_hash
+from docx import Document
+from tempfile import NamedTemporaryFile
 import sqlite3
 import os
 import json
-from werkzeug.security import generate_password_hash, check_password_hash
-from docx import Document
+
 
 app = Flask(__name__, template_folder='Frontend/templates', static_folder='Frontend/static')
 app.secret_key = 'tu_clave_secreta'
@@ -14,7 +16,7 @@ def get_db_connection():
     if not os.path.exists(db_dir):
         os.makedirs(db_dir)
     if not os.path.exists(db_path):
-        # Create the database and table if they don't exist
+        # Crear la base de datos y las tablas si es que no existen
         conn = sqlite3.connect(db_path)
         conn.execute('''CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,6 +39,16 @@ def get_db_connection():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre TEXT UNIQUE NOT NULL
         )''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS plantillas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT,
+                archivo TEXT,
+                fecha_creacion TEXT
+            )
+        ''')
+        
         conn.commit()
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -447,6 +459,8 @@ CAMPOS_EVENTO = {
 
 def convertir_a_template(path_docx):
     doc = Document(path_docx)
+    nuevos_parrafos = []
+
     for p in doc.paragraphs:
         texto = p.text
 
@@ -488,34 +502,31 @@ def convertir_a_template(path_docx):
 
         # 10. Fecha (puede haber varias)
         elif texto.strip().startswith("Fecha:"):
-            p.text = "Fecha: {{evento.fecha}}"
-
-        # 11. Fecha(s)
-        elif texto.strip().startswith("Fecha:"):
             p.text = "Fechas:"
-            idx = doc.paragraphs.index(p)
-            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for fecha in evento.fechas %}{{ fecha }}{% endfor %}"))
-        # 12. Horario
+            nuevos_parrafos.append("{% for fecha in evento.fechas %}{{ fecha }}{% endfor %}")
+
+        # 11. Horario
         elif "Horario:" in texto:
             p.text = "Horarios:"
-            idx = doc.paragraphs.index(p)
-            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for hora in evento.horas %}{{ hora }}{% endfor %}"))
+            nuevos_parrafos.append("{% for hora in evento.horas %}{{ hora }}{% endfor %}")
 
-        # 13. Recursos solicitados (lista)
-        # Dentro de convertir_a_template
+        # 12. Recursos solicitados (lista)
         elif "Recursos solicitados:" in texto:
             p.text = "Recursos solicitados:"
-            # Inserta la lista justo después
-            idx = doc.paragraphs.index(p)
-            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for recurso in evento.recursos_solicitados %}• {{ recurso }}{% endfor %}"))
-    # Bloque para múltiples eventos
-    doc.paragraphs.insert(0, doc.add_paragraph("{% for evento in eventos %}"))
+            nuevos_parrafos.append("{% for recurso in evento.recursos_solicitados %}• {{ recurso }}{% endfor %}")
+
+    # Inserta los bloques for al inicio y final
+    doc.paragraphs[0].insert_paragraph_before("{% for evento in eventos %}")
     doc.add_paragraph("{% endfor %}")
+
+    # Agrega los nuevos párrafos al final del documento
+    for texto in nuevos_parrafos:
+        doc.add_paragraph(texto)
 
     ruta_nueva = path_docx.replace("subidas", "editadas").replace(".docx", "_template.docx")
     doc.save(ruta_nueva)
     return ruta_nueva
-    
+
 @app.route("/subir-plantilla", methods=["GET", "POST"])
 def subir_plantilla():
     if request.method == "POST":
@@ -540,8 +551,23 @@ def subir_plantilla():
 @app.route("/descargar_plantilla_editada", methods=["POST"])
 def descargar_plantilla_editada():
     plantilla_path = request.form.get("plantilla_path")
-    # Aquí podrías aplicar los cambios de los campos editados si lo deseas
-    # Por ahora solo envía el archivo original convertido
+    # Obtén todos los campos enviados por el usuario
+    campos = dict(request.form)
+    campos.pop('plantilla_path', None)  # Elimina la ruta de la plantilla
+
+    doc = Document(plantilla_path)
+    # Reemplaza los marcadores en cada párrafo
+    for p in doc.paragraphs:
+        for campo, valor in campos.items():
+            #convierte evento_titulo en {{evento.titulo}}
+            marcador = f"{{{{{campo.replace('_', '.')}}}}}"
+            if marcador in p.text:
+                p.text = p.text.replace(marcador, valor)
+
+    # Guarda el archivo temporalmente
+    tmp = NamedTemporaryFile(delete=False, suffix=".docx")
+    doc.save(tmp.name)
+    tmp.close()
     return send_file(plantilla_path, as_attachment=True)
 
 def guardar_metadata(nombre, archivo):

@@ -56,6 +56,7 @@ c.execute('''
     CREATE TABLE IF NOT EXISTS plantillas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
+        archivo TEXT,
         fecha_creacion TEXT
     )
 ''')

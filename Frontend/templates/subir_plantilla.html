@@ -8,15 +8,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/plantillas_oficios.css') }}">
 
 </head>
-
 <body>
   <div class="sigea-header">
     SIGEA
   </div>
-<h2>Sube tu plantilla de oficio</h2>
-<form method="post" enctype="multipart/form-data">
-  <input type="file" name="archivo" accept=".docx" required>
-  <button type="submit">Subir y Convertir</button>
-</form>
+  <div class="plantilla-container">
+    <h2>Sube tu plantilla de oficio</h2>
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="archivo" accept=".docx" required>
+      <br>
+      <button type="submit">Subir y Convertir</button>
+    </form>
+  </div>
 </body>
 </html>
