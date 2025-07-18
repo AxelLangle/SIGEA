@@ -5,6 +5,7 @@ from tempfile import NamedTemporaryFile
 import sqlite3
 import os
 import json
+import re
 
 
 app = Flask(__name__, template_folder='Frontend/templates', static_folder='Frontend/static')
@@ -389,30 +390,7 @@ def aprobar_evento():
         )
     conn.commit()
     conn.close()
-    return jsonify({'success': True})
-    datos = request.json.get('datos')
-    usuario_id = session.get('usuario_id')
-    if not usuario_id:
-        return jsonify({'error': 'No autenticado'}), 401
-
-    conn = get_db_connection()
-    # Busca si ya hay un borrador para este usuario
-    borrador = conn.execute(
-        'SELECT id FROM evento WHERE usuario_id = ? AND estado = ?', (usuario_id, 'borrador')
-    ).fetchone()
-    if borrador:
-        # Actualiza el borrador existente a aprobado
-        conn.execute(
-            'UPDATE evento SET datos = ?, estado = ? WHERE id = ?', (json.dumps(datos), 'aprobado', borrador['id'])
-        )
-    else:
-        # Inserta nuevo evento aprobado
-        conn.execute(
-            'INSERT INTO evento (usuario_id, datos, estado) VALUES (?, ?, ?)',
-            (usuario_id, json.dumps(datos), 'aprobado')
-        )
-    conn.commit()
-    conn.close()
+    
     return jsonify({'success': True})
 
 
@@ -541,7 +519,12 @@ def subir_plantilla():
             
             # Leer el contenido para vista previa
             doc = Document(plantilla_convertida)
-            contenido = [p.text for p in doc.paragraphs if p.text.strip()]
+            contenido = []
+            for p in doc.paragraphs:
+                if p.text.strip():
+                    campos = re.findall(r'{{.*?}}', p.text)
+                    contenido.append({'texto': p.text, 'campos': campos})
+            
             # Renderiza la vista previa
             return render_template("vista_previa_plantilla.html", contenido=contenido, plantilla_path=plantilla_convertida)
         else:
@@ -568,7 +551,7 @@ def descargar_plantilla_editada():
     tmp = NamedTemporaryFile(delete=False, suffix=".docx")
     doc.save(tmp.name)
     tmp.close()
-    return send_file(plantilla_path, as_attachment=True)
+    return send_file(tmp.name, as_attachment=True)
 
 def guardar_metadata(nombre, archivo):
     conn = get_db_connection()

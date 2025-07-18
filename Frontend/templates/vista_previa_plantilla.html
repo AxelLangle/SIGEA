@@ -7,77 +7,21 @@
   <link rel="icon" href="{{ url_for('static', filename='images/SIGEA_LOGOTIPO200.png') }}" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/plantillas_oficios.css') }}">
-  <style>
-    .preview-container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 16px rgba(129,27,73,0.10);
-      padding: 32px 28px;
-      max-width: 800px;
-      margin: 40px auto;
-    }
-    .preview-container h2 {
-      color: #811B49;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-      letter-spacing: 0.04em;
-    }
-    .preview-paragraph {
-      font-size: 1.08rem;
-      margin-bottom: 10px;
-      color: #1C1C1C;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .campo-editable {
-      background: #f9f6e7;
-      border: 1px solid #dccb88;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-weight: 600;
-      color: #811B49;
-    }
-    .acciones {
-      margin-top: 30px;
-      text-align: center;
-    }
-    .acciones button {
-      background-color: #dccb88;
-      color: #1C1C1C;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 18px;
-      font-weight: 700;
-      font-size: 1rem;
-      margin: 0 10px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    .acciones button:hover {
-      background-color: #e6d9a7;
-      color: #811B49;
-    }
-  </style>
 </head>
 <body>
-  <div class="preview-container">
+  <div class="sigea-header">SIGEA</div>
+  <div class="plantilla-container preview-container">
     <h2>Vista previa de la plantilla</h2>
     <form method="post" action="{{ url_for('descargar_plantilla_editada') }}">
       {% for parrafo in contenido %}
         <div class="preview-paragraph">
-          {% set campos = parrafo | regex_findall(r'{{.*?}}') %}
-          {% if campos %}
-            {% set texto_editable = parrafo %}
-            {% for campo in campos %}
-              {% set campo_id = campo.replace('{','').replace('}','').replace(' ','_') %}
-              {% set input_html = '<input type="text" name="' ~ campo_id ~ '" class="campo-editable" value="' ~ campo ~ '">' %}
-              {% set texto_editable = texto_editable.replace(campo, input_html) %}
-            {% endfor %}
-            {{ texto_editable | safe }}
-          {% else %}
-            {{ parrafo }}
-          {% endif %}
+          {% set texto = parrafo.texto %}
+          {% for campo in parrafo.campos %}
+            {% set campo_id = campo.replace('{','').replace('}','').replace(' ','').replace('.', '_') %}
+            {% set input_html = '<input type="text" name="' ~ campo_id ~ '" class="campo-editable" value="' ~ campo ~ '">' %}
+            {% set texto = texto.replace(campo, input_html) %}
+          {% endfor %}
+          {{ texto|safe }}
         </div>
       {% endfor %}
       <div class="acciones">
