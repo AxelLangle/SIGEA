@@ -425,6 +425,15 @@
     datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
     datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
 
+    // FECHAS Y HORAS COMO ARRAYS
+    datos['fechas'] = Array.from(document.querySelectorAll('input[name^="fecha-dia-"]'))
+      .map(input => input.value)
+      .filter(val => val);
+
+    datos['horas'] = Array.from(document.querySelectorAll('input[name^="hora-dia-"]'))
+      .map(input => input.value)
+      .filter(val => val);
+
     // Envía los datos al backend como borrador
     const res = await fetch('/api/eventos/borrador', {
       method: 'POST',
@@ -546,6 +555,15 @@
   // Arrays dinámicos
   datos['grupos_asignados'] = Array.from(document.querySelectorAll('input[name="grupos_asignados"]:checked')).map(cb => cb.value);
   datos['recursos_solicitados'] = Array.from(document.querySelectorAll('#lista li span')).map(span => span.textContent);
+
+  // FECHAS Y HORAS COMO ARRAYS
+  datos['fechas'] = Array.from(document.querySelectorAll('input[name^="fecha-dia-"]'))
+    .map(input => input.value)
+    .filter(val => val);
+
+  datos['horas'] = Array.from(document.querySelectorAll('input[name^="hora-dia-"]'))
+    .map(input => input.value)
+    .filter(val => val);
 
   // === VALIDACIÓN ANTES DE ENVIAR ===
   const error = validarEvento(datos);

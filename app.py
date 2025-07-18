@@ -216,6 +216,10 @@ def guardar_borrador():
     usuario_id = session.get('usuario_id')  # Ajusta según tu sistema de login
     if not usuario_id:
         return jsonify({'error': 'No autenticado'}), 401
+    if not datos.get('fechas') or not isinstance(datos['fechas'], list) or len(datos['fechas']) == 0:
+        return jsonify({'error': 'Debes ingresar al menos una fecha.'}), 400
+    if not datos.get('horas') or not isinstance(datos['horas'], list) or len(datos['horas']) == 0:
+        return jsonify({'error': 'Debes ingresar al menos una hora.'}), 400
 
     conn = get_db_connection()
     # Busca si ya hay un borrador para este usuario
@@ -444,20 +448,74 @@ CAMPOS_EVENTO = {
 def convertir_a_template(path_docx):
     doc = Document(path_docx)
     for p in doc.paragraphs:
-        texto = p.text.lower()
-        for clave, campo in CAMPOS_EVENTO.items():
-            if clave in texto:
-                p.text = p.text.replace(clave, f"{{{{ evento.{campo} }}}}")
-        if any(x in texto for x in [" de ", "/", "-"]) and any(d in texto for d in ["202", "19"]):
-            p.text = "{{ evento.fecha }}"
-        if "hora" in texto:
-            p.text = "{{ evento.hora }}"
+        texto = p.text
+
+        # 1. Lugar y fecha actual
+        if "Tecámac, Estado de México" in texto and "a" in texto:
+            p.text = "{{evento.lugar_actual}} a {{fecha_actual}}"
+
+        # 2. Oficio No.
+        elif "Oficio No." in texto:
+            p.text = "Oficio No. {{numero_oficio}}"
+
+        # 3. Categoría
+        elif "CATEGORIA:" in texto:
+            p.text = "CATEGORIA: {{evento.categoria}}"
+
+        # 4. Evento
+        elif "EVENTO:" in texto:
+            p.text = "EVENTO: {{evento.titulo}}"
+
+        # 5. Impacto
+        elif "Impacto:" in texto and "SEAES:" in texto:
+            p.text = "Impacto: {{evento.impacto}}"
+
+        # 6. Temática
+        elif "Temática:" in texto:
+            p.text = "Tematica: {{evento.tematica}}"
+
+        # 7. Justificación
+        elif "Justificación:" in texto:
+            p.text = "Justificacion: {{evento.justificacion}}"
+
+        # 8. Objetivo
+        elif "Objetivo:" in texto:
+            p.text = "Objetivo: {{evento.objetivo}}"
+
+        # 9. Dinámica
+        elif "Dinámica:" in texto:
+            p.text = "Dinamica: {{evento.dinamica}}"
+
+        # 10. Fecha (puede haber varias)
+        elif texto.strip().startswith("Fecha:"):
+            p.text = "Fecha: {{evento.fecha}}"
+
+        # 11. Fecha(s)
+        elif texto.strip().startswith("Fecha:"):
+            p.text = "Fechas:"
+            idx = doc.paragraphs.index(p)
+            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for fecha in evento.fechas %}{{ fecha }}{% endfor %}"))
+        # 12. Horario
+        elif "Horario:" in texto:
+            p.text = "Horarios:"
+            idx = doc.paragraphs.index(p)
+            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for hora in evento.horas %}{{ hora }}{% endfor %}"))
+
+        # 13. Recursos solicitados (lista)
+        # Dentro de convertir_a_template
+        elif "Recursos solicitados:" in texto:
+            p.text = "Recursos solicitados:"
+            # Inserta la lista justo después
+            idx = doc.paragraphs.index(p)
+            doc.paragraphs.insert(idx + 1, doc.add_paragraph("{% for recurso in evento.recursos_solicitados %}• {{ recurso }}{% endfor %}"))
+    # Bloque para múltiples eventos
     doc.paragraphs.insert(0, doc.add_paragraph("{% for evento in eventos %}"))
     doc.add_paragraph("{% endfor %}")
+
     ruta_nueva = path_docx.replace("subidas", "editadas").replace(".docx", "_template.docx")
     doc.save(ruta_nueva)
     return ruta_nueva
-
+    
 @app.route("/subir-plantilla", methods=["GET", "POST"])
 def subir_plantilla():
     if request.method == "POST":
