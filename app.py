@@ -524,11 +524,25 @@ def subir_plantilla():
             ruta_guardado = os.path.join("templates_plantillas_subidas", archivo.filename)
             archivo.save(ruta_guardado)
             plantilla_convertida = convertir_a_template(ruta_guardado)
-            # Aquí puedes guardar metadata en la BD si lo deseas
-            return send_file(plantilla_convertida, as_attachment=True)
+            
+            # Guarda la metadata en la BD
+            guardar_metadata(archivo.filename, plantilla_convertida)
+            
+            # Leer el contenido para vista previa
+            doc = Document(plantilla_convertida)
+            contenido = [p.text for p in doc.paragraphs if p.text.strip()]
+            # Renderiza la vista previa
+            return render_template("vista_previa_plantilla.html", contenido=contenido, plantilla_path=plantilla_convertida)
         else:
             return "Formato no válido. Sube un archivo .docx"
     return render_template("subir_plantilla.html")
+
+@app.route("/descargar_plantilla_editada", methods=["POST"])
+def descargar_plantilla_editada():
+    plantilla_path = request.form.get("plantilla_path")
+    # Aquí podrías aplicar los cambios de los campos editados si lo deseas
+    # Por ahora solo envía el archivo original convertido
+    return send_file(plantilla_path, as_attachment=True)
 
 def guardar_metadata(nombre, archivo):
     conn = get_db_connection()

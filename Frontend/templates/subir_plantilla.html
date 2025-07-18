@@ -2,14 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>
+  <title>Subir Plantilla</title>
   <link rel="icon" href="{{ url_for('static', filename='images/SIGEA_LOGOTIPO200.png') }}" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/plantillas_oficios.css') }}">
 
 </head>
 
 <body>
+  <div class="sigea-header">
+    SIGEA
+  </div>
 <h2>Sube tu plantilla de oficio</h2>
 <form method="post" enctype="multipart/form-data">
   <input type="file" name="archivo" accept=".docx" required>
